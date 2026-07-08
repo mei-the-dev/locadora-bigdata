@@ -1,84 +1,116 @@
 <!--
-  Proposta Executiva — Avaliação 03: Solução Big Data (MAE016 / UFRJ)
-  Registro executivo: problema, valor de negócio, decisões de arquitetura justificadas,
-  casos de uso e custos. Fundamentação teórica aprofundada: relatório acadêmico interno.
+  Proposta Executiva (orientada a diretoria) — Avaliação 03: Solução Big Data (MAE016 / UFRJ)
+  Registro executivo: objetividade e clareza nas propostas de valor de uso.
+  Versão técnica preservada em proposta-executiva-tecnica.html
   Exportar PDF: navegador > Imprimir > PDF > A4 > "Gráficos de plano de fundo".
 -->
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600;700&display=swap');
 *{ margin:0; padding:0; box-sizing:border-box; }
 html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 :root{
-  --ink:#1a1b1e; --ink-2:#3b3e46; --muted:#656974; --faint:#9a9ca4;
-  --rule:#e0ddd0; --rule-2:#cec9b8; --bg:#ffffff; --paper:#f5f3ec; --paper-2:#eeebe0; --card:#fff;
-  --accent:#26418f; --accent-s:#e9edf9; --plum:#6d2f86; --plum-s:#f1e9f4;
-  --amber:#9a5a12; --amber-s:#f5ecd9; --teal:#0f6f52; --teal-s:#e4f0ea; --red:#a63142;
-  --font-serif:'Newsreader', Georgia, serif; --font-sans:'Inter', system-ui, sans-serif; --font-mono:'JetBrains Mono', ui-monospace, monospace;
+  --ink:#17181c; --ink-2:#3a3d44; --muted:#6a6e78; --faint:#9a9ca4;
+  --line:#e6e3d9; --line-2:#d3cfc1; --bg:#fbfaf6; --card:#ffffff; --paper:#f4f1e8;
+  --accent:#1f3d7a; --accent-s:#eaeff7; --gold:#9a6a12; --gold-s:#f6efdd;
+  --teal:#0f6f52; --teal-s:#e4f0ea; --plum:#6d2f86; --plum-s:#f1e9f4; --red:#a63142;
+  --serif:'Newsreader', Georgia, serif; --sans:'Inter', system-ui, sans-serif;
 }
-body{ font-family:var(--font-sans); color:var(--ink-2); background:var(--paper); line-height:1.6; font-size:15px; }
-.doc{ max-width:840px; margin:0 auto; background:var(--bg); box-shadow:0 1px 30px rgba(0,0,0,0.06); }
-.page{ padding:52px 66px 60px; }
-h1,h2,h3,h4{ font-family:var(--font-serif); color:var(--ink); line-height:1.16; }
-h1{ font-size:2.6rem; font-weight:700; letter-spacing:-0.01em; }
-h2{ font-size:1.55rem; font-weight:600; margin:2em 0 0.5em; padding-top:0.55em; border-top:1.5px solid var(--rule-2); }
-h2 .n{ font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--accent); margin-right:0.6em; }
-h2 .ptag{ font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:700; padding:0.16em 0.55em; border-radius:3px; margin-left:0.55em; white-space:nowrap; display:inline-block; }
-h2 .ptag.a{ background:var(--accent-s); color:var(--accent); } h2 .ptag.b{ background:var(--plum-s); color:var(--plum); }
-h3{ font-size:1.16rem; font-weight:600; margin:1.4em 0 0.4em; } h4{ font-family:var(--font-sans); font-size:1rem; font-weight:600; margin:1em 0 0.3em; color:var(--ink); }
-p{ margin:0.55em 0; } strong{ color:var(--ink); font-weight:600; } em{ color:var(--ink-2); }
-ul,ol{ margin:0.5em 0 0.8em 1.3em; } li{ margin:0.26em 0; }
-.mono{ font-family:var(--font-mono); font-size:0.86em; }
-.cite{ font-family:var(--font-mono); font-size:0.82em; color:var(--muted); }
-code{ font-family:var(--font-mono); font-size:0.83em; background:var(--paper-2); border:1px solid var(--rule); border-radius:5px; padding:0.05em 0.4em; color:var(--ink); }
-.lead{ font-size:1.07rem; color:var(--ink-2); } .small{ font-size:0.86rem; color:var(--muted); } .faint{ color:var(--faint); }
-.cover{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; gap:0.2rem; padding:64px 66px; background:var(--bg); border-top:9px solid var(--accent); }
-.cover .tagrow{ font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:1.2em; }
-.cover h1{ color:var(--ink); font-size:3rem; line-height:1.06; } .cover h1 .ac{ color:var(--accent); }
-.cover .sub{ font-family:var(--font-serif); font-size:1.32rem; color:var(--muted); margin-top:0.55em; max-width:36ch; }
-.cover .folha{ margin-top:2em; background:var(--accent-s); border:1px solid var(--rule-2); border-left:4px solid var(--accent); border-radius:8px; padding:18px 24px; max-width:540px; }
-.cover .folha .h{ font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:0.6em; }
-.cover .folha .row{ display:flex; justify-content:space-between; gap:1rem; padding:0.24em 0; border-bottom:1px dotted var(--rule-2); font-size:0.94rem; color:var(--ink); }
-.cover .folha .row:last-child{ border-bottom:none; } .cover .folha .dre{ font-family:var(--font-mono); color:var(--muted); }
-.cover .meta{ margin-top:2em; font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:0.4em 1.5em; }
-.toc{ background:var(--paper); border:1px solid var(--rule); border-radius:10px; padding:18px 26px; margin:1.3em 0; }
-.toc h3{ margin:0 0 0.5em; } .toc ol{ margin-left:1.1em; columns:2; column-gap:2.4em; font-size:0.92rem; } .toc li{ margin:0.18em 0; }
-.callout{ border:1px solid var(--rule); border-left:3px solid var(--accent); background:var(--paper); border-radius:0 9px 9px 0; padding:13px 20px; margin:1.05em 0; }
-.callout.amber{ border-left-color:var(--amber); } .callout.teal{ border-left-color:var(--teal); } .callout.plum{ border-left-color:var(--plum); } .callout.red{ border-left-color:var(--red); }
-.callout .k{ font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:0.3em; }
-.callout.amber .k{ color:var(--amber); } .callout.teal .k{ color:var(--teal); } .callout.plum .k{ color:var(--plum); }
-table{ width:100%; border-collapse:collapse; margin:1em 0; font-size:0.89rem; }
-th,td{ text-align:left; padding:8px 12px; border-bottom:1px solid var(--rule); vertical-align:top; }
-thead th{ background:var(--paper-2); font-weight:600; color:var(--ink); font-size:0.8rem; } td strong{ color:var(--ink); }
-.win{ color:var(--teal); font-weight:600; } .lose{ color:var(--red); font-weight:600; }
-.cards{ display:grid; grid-template-columns:1fr 1fr; gap:13px; margin:1em 0; }
-.cards.g3{ grid-template-columns:1fr 1fr 1fr; }
-.cardbox{ border:1px solid var(--rule); border-left:4px solid var(--accent); border-radius:9px; padding:13px 18px; background:var(--card); }
-.cardbox.blue{ border-left-color:var(--accent); } .cardbox.amber{ border-left-color:var(--amber); } .cardbox.teal{ border-left-color:var(--teal); } .cardbox.plum{ border-left-color:var(--plum); } .cardbox.red{ border-left-color:var(--red); }
-.cardbox h4{ margin-top:0; } .cardbox .tag{ font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
-.kpi{ display:inline-block; font-family:var(--font-mono); font-size:0.68rem; font-weight:700; padding:0.1em 0.5em; border-radius:3px; background:var(--teal-s); color:var(--teal); margin-top:0.5em; }
-.pipe{ font-family:var(--font-mono); font-size:0.8rem; background:var(--paper-2); color:var(--ink-2); border:1px solid var(--rule-2); border-radius:9px; padding:15px 20px; margin:1em 0; line-height:1.85; overflow-x:auto; }
-.pipe .b{ color:var(--accent); font-weight:500; } .pipe .y{ color:var(--amber); font-weight:500; } .pipe .g{ color:var(--teal); font-weight:500; } .pipe .m{ color:var(--plum); font-weight:500; } .pipe .dim{ color:var(--faint); }
-.refs{ font-size:0.82rem; } .refs p{ margin:0.3em 0; padding-left:1.4em; text-indent:-1.4em; } .refs .a{ color:var(--ink); font-weight:600; }
-footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border-top:1px solid var(--rule); display:flex; justify-content:space-between; }
+body{ font-family:var(--sans); color:var(--ink-2); background:var(--bg); line-height:1.62; font-size:15px; -webkit-font-smoothing:antialiased; }
+.doc{ max-width:860px; margin:0 auto; background:var(--bg); }
+.page{ padding:48px 68px 56px; }
+h1,h2,h3,h4{ font-family:var(--serif); color:var(--ink); line-height:1.14; }
+strong{ color:var(--ink); font-weight:600; } em{ color:var(--ink-2); font-style:italic; }
+p{ margin:0.5em 0; }
+.eyebrow{ font-family:var(--sans); font-size:0.72rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); }
+
+/* Cover */
+.cover{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:70px 70px; background:linear-gradient(180deg,#fff 0%,var(--bg) 100%); border-top:10px solid var(--accent); }
+.cover .eyebrow{ margin-bottom:1.6em; }
+.cover h1{ font-size:3.3rem; font-weight:700; letter-spacing:-0.015em; line-height:1.05; }
+.cover h1 .ac{ color:var(--accent); }
+.cover .promise{ font-family:var(--serif); font-size:1.5rem; color:var(--muted); margin-top:0.7em; max-width:30ch; line-height:1.32; }
+.folha{ margin-top:2.6em; background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:18px 24px; max-width:560px; box-shadow:0 6px 24px rgba(23,24,28,0.05); }
+.folha .h{ font-family:var(--sans); font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:0.7em; font-weight:600; }
+.folha .row{ display:flex; justify-content:space-between; gap:1rem; padding:0.26em 0; border-bottom:1px dotted var(--line-2); font-size:0.96rem; color:var(--ink); }
+.folha .row:last-child{ border-bottom:none; } .folha .dre{ color:var(--muted); font-variant-numeric:tabular-nums; }
+.cover .meta{ margin-top:2.2em; font-family:var(--sans); font-size:0.82rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:0.3em 1.6em; }
+
+/* Section headers */
+h2.sec{ font-size:1.7rem; font-weight:600; margin:1.7em 0 0.15em; letter-spacing:-0.01em; }
+.sec-lead{ font-size:1.02rem; color:var(--ink-2); margin-bottom:0.9em; max-width:64ch; }
+.rule{ height:2px; background:var(--ink); width:44px; margin:0.5em 0 1.1em; }
+
+/* Executive summary */
+.summary{ font-family:var(--serif); font-size:1.24rem; line-height:1.5; color:var(--ink-2); border-left:3px solid var(--accent); padding:0.2em 0 0.2em 1.1em; margin:0.6em 0 0.4em; }
+.summary strong{ color:var(--ink); font-weight:600; }
+
+/* KPI band */
+.kpis{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden; margin:1.4em 0; }
+.kpi{ background:var(--card); padding:16px 18px; }
+.kpi .v{ font-family:var(--serif); font-size:1.5rem; font-weight:700; color:var(--accent); line-height:1; }
+.kpi .v.up::before{ content:"▲ "; font-size:0.7em; color:var(--teal); } .kpi .v.dn::before{ content:"▼ "; font-size:0.7em; color:var(--gold); }
+.kpi .l{ font-size:0.82rem; color:var(--muted); margin-top:0.35em; }
+
+/* Value cards */
+.vgrid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:1.1em 0; }
+.vcard{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; box-shadow:0 2px 10px rgba(23,24,28,0.03); }
+.vcard .num{ font-family:var(--serif); font-size:0.9rem; font-weight:700; color:var(--accent); }
+.vcard h4{ font-family:var(--serif); font-size:1.16rem; font-weight:600; margin:0.15em 0 0.3em; }
+.vcard p{ font-size:0.92rem; color:var(--ink-2); margin:0.2em 0; }
+.vcard .use{ color:var(--muted); }
+.vcard .gain{ display:inline-block; margin-top:0.7em; font-size:0.8rem; font-weight:600; color:var(--teal); background:var(--teal-s); border-radius:20px; padding:0.22em 0.8em; }
+.vcard .gain.g2{ color:var(--gold); background:var(--gold-s); } .vcard .gain.g3{ color:var(--plum); background:var(--plum-s); } .vcard .gain.g4{ color:var(--accent); background:var(--accent-s); }
+
+/* How it works */
+.steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:1em 0; }
+.step{ background:var(--paper); border-radius:12px; padding:18px 20px; position:relative; }
+.step .n{ font-family:var(--serif); font-size:2.2rem; font-weight:700; color:var(--line-2); line-height:1; }
+.step h4{ font-family:var(--sans); font-size:1rem; font-weight:600; margin:0.2em 0 0.25em; }
+.step p{ font-size:0.9rem; color:var(--ink-2); }
+
+/* Table */
+table{ width:100%; border-collapse:collapse; margin:0.9em 0; font-size:0.92rem; }
+th,td{ text-align:left; padding:10px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+thead th{ background:var(--paper); font-family:var(--sans); font-weight:600; color:var(--ink); font-size:0.8rem; letter-spacing:0.02em; }
+td strong{ color:var(--ink); } .effect{ color:var(--teal); font-weight:600; }
+
+/* Cases */
+.case{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 22px; margin:12px 0; display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:start; }
+.case .tag{ font-family:var(--sans); font-size:0.66rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#fff; background:var(--accent); border-radius:6px; padding:0.3em 0.6em; white-space:nowrap; align-self:center; }
+.case .tag.c2{ background:var(--gold); } .case .tag.c3{ background:var(--teal); }
+.case h4{ font-family:var(--serif); font-size:1.12rem; font-weight:600; margin-bottom:0.15em; }
+.case p{ font-size:0.92rem; margin:0.15em 0; } .case .out{ color:var(--teal); font-weight:600; }
+
+/* Close / proof */
+.proof{ background:var(--accent); color:#fff; border-radius:14px; padding:26px 30px; margin:1.4em 0; }
+.proof .eyebrow{ color:#bcd0f0; }
+.proof h3{ color:#fff; font-size:1.5rem; font-weight:600; margin:0.3em 0 0.4em; }
+.proof p{ color:#e4ecf8; font-size:0.98rem; max-width:66ch; }
+.proof strong{ color:#fff; font-weight:700; }
+.proof .cta{ margin-top:1em; display:flex; gap:2rem; flex-wrap:wrap; font-size:0.9rem; color:#fff; }
+.proof .cta b{ color:#fff; display:block; font-size:1.05rem; font-family:var(--serif); }
+.footnote{ font-size:0.82rem; color:var(--muted); margin-top:1.4em; border-top:1px solid var(--line); padding-top:0.9em; }
+
 @media print{
-  @page{ size:A4; margin:16mm 15mm; }
-  body{ background:#fff; font-size:10.6pt; } .doc{ max-width:none; box-shadow:none; } .page{ padding:0; }
-  .cover{ min-height:0; height:calc(297mm - 32mm); padding:24mm 4mm 0; page-break-after:always; }
-  h2{ break-after:avoid; page-break-after:avoid; } h3,h4{ break-after:avoid; }
-  p:has(+ .cards), p:has(+ table), p:has(+ .pipe){ break-after:avoid; page-break-after:avoid; }
-  .cardbox,.callout,.pipe{ break-inside:avoid; } tr{ break-inside:avoid; } thead{ display:table-header-group; }
-  .toc ol{ columns:2; } footer.docfoot{ display:none; }
+  @page{ size:A4; margin:15mm 15mm; }
+  body{ background:#fff; font-size:10.5pt; } .doc{ max-width:none; } .page{ padding:0; }
+  .cover{ min-height:0; height:calc(297mm - 30mm); padding:20mm 6mm 0; page-break-after:always; background:#fff; }
+  h2.sec{ break-after:avoid; } .sec-lead{ break-after:avoid; }
+  p:has(+ .vgrid), p:has(+ table), p:has(+ .kpis), p:has(+ .steps){ break-after:avoid; }
+  .vcard,.kpi,.step,.case,.proof,.summary{ break-inside:avoid; } tr{ break-inside:avoid; } thead{ display:table-header-group; }
 }
-@media (max-width:640px){ .cards,.cards.g3{ grid-template-columns:1fr; } .toc ol{ columns:1; } .page{ padding:32px 22px; } .cover{ padding:40px 26px; } }
+@media (max-width:680px){ .vgrid,.kpis,.steps{ grid-template-columns:1fr; } .case{ grid-template-columns:1fr; } .page{ padding:30px 22px; } .cover{ padding:40px 26px; } }
 </style>
 
 <article class="doc">
+
+<!-- CAPA -->
 <section class="cover">
-  <div class="tagrow">MAE016.15912 · Big Data · UFRJ/NCE · Avaliação 03</div>
-  <h1>Proposta Executiva<br><span class="ac">Solução Big Data</span> para uma Frota Autônoma Conectada</h1>
-  <p class="sub">Arquitetura de dados resiliente, escalável e em tempo real, orientada a valor de negócio.</p>
+  <div class="eyebrow">MAE016.15912 · Proposta Executiva · Consórcio de Locadoras</div>
+  <h1>Uma frota que <span class="ac">se paga melhor</span>,<br>se cuida sozinha e<br>encanta o cliente.</h1>
+  <p class="promise">Cada veículo vira decisão de negócio em tempo real — mais receita, menos custo, menos risco.</p>
   <div class="folha">
-    <div class="h">Folha de rosto · componentes do grupo (nome completo + DRE)</div>
+    <div class="h">Grupo · nome completo e DRE</div>
     <div class="row"><span>Izabela Lima da Silva</span><span class="dre">DRE 124156557</span></div>
     <div class="row"><span>Caio Meirelles</span><span class="dre">DRE 122071557</span></div>
   </div>
@@ -87,116 +119,79 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
 
 <div class="page">
 
-<p class="lead">Esta proposta especifica uma solução de <strong>Big Data</strong> para monitorar, em tempo real, uma frota de veículos autônomos e conectados de um consórcio de seis locadoras. O documento é orientado a <strong>decisão e valor de negócio</strong>: apresenta o problema, o retorno esperado, a arquitetura e a justificativa objetiva de cada escolha. A fundamentação teórica aprofundada e as referências estão consolidadas no <em>relatório acadêmico</em> que acompanha o trabalho.</p>
+<!-- RESUMO PARA A DIRETORIA -->
+<h2 class="sec">Resumo para a diretoria</h2>
+<div class="rule"></div>
+<p class="summary">Propomos uma plataforma que acompanha a frota autônoma <strong>em tempo real</strong> e transforma cada dado do veículo em <strong>ação automática de negócio</strong>: reposicionar carros onde haverá demanda, cobrar cada locação com justiça, socorrer incidentes em segundos e oferecer um concierge de viagem. O resultado é <strong>mais receita por veículo, menor custo por locação e menor risco operacional</strong> — sem aumentar a frota nem o quadro de atendimento.</p>
 
-<div class="callout"><span class="k">Divisão do trabalho (defesa oral)</span><strong>Parte A — Infraestrutura & fluxo</strong> (borda, ingestão, arquitetura Kappa, processamento): seções 4. <strong>Parte B — Armazenamento, interface & IA</strong> (persistência poliglota, dashboard, cobrança, concierge): seções 5–6. Emergências (hot path) é a ponte.</div>
-
-<div class="toc"><h3>Sumário</h3><ol>
-  <li>O problema e o valor de negócio</li>
-  <li>Do DW (Avaliação 02) ao Big Data e a extensão do modelo</li>
-  <li>Visão da solução (pipeline)</li>
-  <li>Decisões de arquitetura e justificativas</li>
-  <li>Serving: dashboard, cobrança e emergências</li>
-  <li>Concierge de viagem por IA</li>
-  <li>Casos de uso e rastreabilidade das entidades</li>
-  <li>Custos, nuvem e prova de conceito</li>
-  <li>Alternativas descartadas</li>
-  <li>Conclusão</li>
-</ol></div>
-
-<h2><span class="n">01</span>O problema e o valor de negócio</h2>
-<p>O consórcio automatizou a operação: pelo aplicativo, o cliente reserva e indica o local; o <strong>veículo sai sozinho do pátio</strong>, navega no trânsito e estaciona no ponto pedido; ao fim, retorna para higienização. Cada veículo é um <strong>sensor sobre rodas</strong> (motor, chassi, câmeras 360°, impacto) com computador de bordo. O sistema deve sustentar quatro necessidades — acompanhamento, cobrança automática, apoio a emergências e um concierge por IA — sob banda móvel <strong>cara e finita</strong>, alta concorrência <strong>sem perda de pacotes</strong> e <strong>ordenação estrita por veículo e timestamp</strong>.</p>
-<p>A arquitetura é meio; o valor é o fim. Cada capacidade técnica move um indicador do negócio:</p>
-<div class="cards g3">
-  <div class="cardbox teal"><span class="tag">Utilização</span><h4>Menos veículos ociosos</h4><p>Redistribuição inteligente (Markov + rotas em tempo real) maximiza o giro dos ativos.</p><span class="kpi">↑ taxa de utilização</span></div>
-  <div class="cardbox blue"><span class="tag">Receita</span><h4>Cobrança dinâmica justa</h4><p>Captura acréscimos por km, consumo e infrações; transparência reduz contestações.</p><span class="kpi">↑ receita / locação</span></div>
-  <div class="cardbox"><span class="tag">Custo</span><h4>Sem balcão nem entrega</h4><p>Reserva pelo app + veículo autônomo cortam atendimento e logística.</p><span class="kpi">↓ custo / locação</span></div>
-  <div class="cardbox amber"><span class="tag">Sinistros</span><h4>Resposta e regulação rápidas</h4><p>Detecção na borda + dossiê automático aceleram socorro e seguradora.</p><span class="kpi">↓ tempo de resposta</span></div>
-  <div class="cardbox red"><span class="tag">Disponibilidade</span><h4>Manutenção preditiva</h4><p>Antecipar panes reduz o veículo parado e a quebra em operação.</p><span class="kpi">↓ downtime</span></div>
-  <div class="cardbox plum"><span class="tag">Experiência</span><h4>Concierge por IA</h4><p>Roteiro personalizado por voz diferencia o serviço e fideliza.</p><span class="kpi">↑ satisfação / NPS</span></div>
+<div class="kpis">
+  <div class="kpi"><div class="v up">Utilização</div><div class="l">Frota reposicionada antes da demanda: menos carros ociosos.</div></div>
+  <div class="kpi"><div class="v up">Receita / locação</div><div class="l">Cobrança automática pelo uso real, sem vazamento.</div></div>
+  <div class="kpi"><div class="v dn">Custo / locação</div><div class="l">Reserva pelo app e carro autônomo: sem balcão nem entrega.</div></div>
+  <div class="kpi"><div class="v dn">Tempo de sinistro</div><div class="l">Socorro e seguradora acionados em segundos, com dossiê pronto.</div></div>
+  <div class="kpi"><div class="v dn">Downtime</div><div class="l">Manutenção prevista antes da falha: menos carro parado.</div></div>
+  <div class="kpi"><div class="v up">Satisfação / NPS</div><div class="l">Concierge por IA personaliza a experiência e fideliza.</div></div>
 </div>
 
-<h2><span class="n">02</span>Do DW (Avaliação 02) ao Big Data e a extensão do modelo</h2>
-<p>Na etapa anterior modelamos um <strong>Data Warehouse</strong> dimensional em PostgreSQL — esquema estrela com os fatos <strong>Reserva</strong>, <strong>Locação</strong> e <strong>Movimentação</strong> sobre dimensões conformadas, integrando 4 fontes OLTP, com previsão de ocupação de pátios por <strong>cadeias de Markov</strong>. Esse modelo é batch (D-1) e não cobre a frota conectada.</p>
-<p>Em vez de manter DW e data lake separados, adotamos o <strong>Lakehouse</strong>: o esquema estrela passa a ser a camada <strong>Gold</strong>, alimentada por ELT a partir do streaming. Estendemos o modelo com quatro novos fatos (<strong>Telemetria, Cobrança, Sinistro, Manutenção</strong>) e novas dimensões (<strong>Tempo_Detalhe</strong> de grão minuto, <strong>Sensor</strong> SCD-2, TipoEvento, FaixaCondução). O DDL da extensão (<code>06_ddl_extensao.sql</code>) foi <strong>validado</strong> em PostgreSQL. <span class="cite">(Detalhamento na seção 4 do relatório acadêmico.)</span></p>
-
-<h2><span class="n">03</span>Visão da solução <span class="ptag a">Parte A</span></h2>
-<p>O pipeline cobre <strong>ingestão → processamento → armazenamento → visualização</strong>, com três caminhos de latências distintas.</p>
-<div class="pipe">
-<span class="dim"># Pipeline fim a fim</span><br>
-[<span class="b">Borda/Edge</span> (Avro)] › [<span class="b">MQTT</span> › ponte › <span class="b">Kafka</span> (telemetry.raw | <span class="y">alerts.critical</span>)] ›<br>
-&nbsp;&nbsp;├─ <span class="y">HOT</span>&nbsp; colisão → <span class="y">Spark Streaming</span> → despacho + dossiê<br>
-&nbsp;&nbsp;├─ <span class="b">WARM</span> telemetria 1s → <span class="b">Flink</span> (event-time/watermarks) → rotas, score<br>
-&nbsp;&nbsp;└─ <span class="g">COLD</span> Delta Bronze → <span class="g">Spark batch</span> → km, manutenção, Markov<br>
-[<span class="m">Delta Lake</span> Bronze→Silver→<span class="g">Gold (DW estendido)</span>] › [NoSQL: Cassandra · Mongo · Redis] › [Streamlit · Cobrança · Concierge]
+<!-- PROPOSTAS DE VALOR DE USO -->
+<h2 class="sec">O que a solução entrega — e como se usa</h2>
+<div class="rule"></div>
+<p class="sec-lead">Seis capacidades, cada uma ligada a um ganho de negócio mensurável. Objetivo: valor de uso, não tecnologia.</p>
+<div class="vgrid">
+  <div class="vcard"><span class="num">01</span><h4>Frota sempre no lugar certo</h4><p class="use">A plataforma prevê onde haverá procura (horário, dia, aeroporto, eventos) e move os carros vazios para lá antes do pico.</p><span class="gain">↑ utilização · menos ociosidade</span></div>
+  <div class="vcard"><span class="num">02</span><h4>Cobrança justa e automática</h4><p class="use">Cada locação é medida pelo uso real — quilometragem, tempo, consumo e forma de dirigir — e cobrada sem intervenção, com tudo auditável.</p><span class="gain">↑ receita · ↓ contestações</span></div>
+  <div class="vcard"><span class="num">03</span><h4>Resposta imediata a incidentes</h4><p class="use">O próprio veículo detecta a colisão e aciona guincho, seguradora e um carro substituto em segundos — e já entrega o relatório do acidente.</p><span class="gain g2">↓ tempo de resposta e de regulação</span></div>
+  <div class="vcard"><span class="num">04</span><h4>Menos veículos parados</h4><p class="use">Os sensores antecipam falhas; o carro é agendado para revisão antes de quebrar em operação.</p><span class="gain g2">↓ downtime · ↓ custo de reparo</span></div>
+  <div class="vcard"><span class="num">05</span><h4>Operação sem balcão</h4><p class="use">O cliente reserva pelo app e indica o ponto; o veículo vai e volta sozinho para higienização.</p><span class="gain g4">↓ custo por locação</span></div>
+  <div class="vcard"><span class="num">06</span><h4>Experiência premium por IA</h4><p class="use">Um concierge de voz monta o roteiro do cliente — almoço, agenda, passeios — e já programa o trajeto.</p><span class="gain g3">↑ satisfação · recompra</span></div>
 </div>
 
-<h2><span class="n">04</span>Decisões de arquitetura e justificativas <span class="ptag a">Parte A</span></h2>
-<p>Cada camada resolve um requisito não funcional específico. As justificativas abaixo são objetivas; o embasamento teórico completo está no relatório acadêmico.</p>
+<!-- COMO FUNCIONA -->
+<h2 class="sec">Como funciona, em uma frase</h2>
+<div class="rule"></div>
+<p class="sec-lead">O veículo sente, a plataforma entende na hora e o negócio age sozinho.</p>
+<div class="steps">
+  <div class="step"><div class="n">1</div><h4>O veículo sente</h4><p>Sensores e inteligência a bordo filtram o essencial e enviam só o que importa — economizando dados.</p></div>
+  <div class="step"><div class="n">2</div><h4>A plataforma entende</h4><p>Tudo chega ordenado e sem perda, e vira informação em tempo real — mesmo com rede instável.</p></div>
+  <div class="step"><div class="n">3</div><h4>O negócio age</h4><p>Painel, cobrança, socorro e concierge disparam automaticamente, sem operador no meio.</p></div>
+</div>
+
+<!-- RETORNO -->
+<h2 class="sec">Onde está o retorno</h2>
+<div class="rule"></div>
 <table>
-  <thead><tr><th>Decisão</th><th>Por quê (justificativa)</th><th>Descartamos</th></tr></thead>
+  <thead><tr><th style="width:26%">Alavanca</th><th>O que fazemos</th><th style="width:30%">Efeito no negócio</th></tr></thead>
   <tbody>
-    <tr><td><strong>Borda filtra</strong> (Avro/MQTT)</td><td>Banda é o recurso escasso; só agregados e exceções trafegam. A reação sub-segundo à colisão é embarcada. <span class="cite">(Dean & Ghemawat 2004)</span></td><td>Enviar vídeo bruto</td></tr>
-    <tr><td><strong>Kafka</strong> (log particionado)</td><td>Tópicos isolados (telemetria vs. alarme); partição por <code>vehicle_id</code> dá ordem por veículo; replay e durabilidade sob concorrência. <span class="cite">(Kreps 2011)</span></td><td>HTTP síncrono no banco</td></tr>
-    <tr><td><strong>Kappa + Delta Lake</strong></td><td>Um só código; o Delta traz ACID e time travel ao object store, unificando lote e streaming. <span class="cite">(Fragkoulis 2020; Armbrust 2020)</span></td><td>Lambda (código duplo)</td></tr>
-    <tr><td><strong>3 regimes</strong> (Spark/Flink)</td><td>SLAs distintos: vazão histórica (Spark batch), emergência (Spark Streaming), latência mínima com watermarks (Flink). <span class="cite">(Zaharia 2012/13; Carbone 2015)</span></td><td>Um motor único</td></tr>
-    <tr><td><strong>Persistência poliglota</strong></td><td>Teorema CAP: cada dado no banco certo — Cassandra (telemetria/AP), Mongo (cadastrais), Redis (cache), PostgreSQL/Delta (cobrança/CP). <span class="cite">(Gilbert & Lynch 2002)</span></td><td>Banco relacional único</td></tr>
-  </tbody>
-</table>
-<div class="callout"><span class="k">Conectividade e ordenação</span>Túneis e zonas de sombra entregam dados fora de ordem. A solução combina compressão e <em>store-and-forward</em> na borda, ordem por <code>vehicle_id</code> no Kafka e <strong>event-time + watermarks</strong> no Flink, garantindo a ordenação estrita por veículo e timestamp mesmo sob rede oscilante.</div>
-
-<h2><span class="n">05</span>Serving: dashboard, cobrança e emergências <span class="ptag b">Parte B</span></h2>
-<h4>Dashboard (Streamlit)</h4>
-<p>Painel OLAP sobre a camada <strong>Gold</strong> (nunca sobre os OLTP), atualizado em quase tempo real via Redis. Traz mapa geoespacial, cartões consolidados (veículos ativos, bateria média, alertas mecânicos), <strong>triagem de incidentes que pisca em vermelho</strong>, e painéis de reservas, financeiro, viagens e oficina.</p>
-<h4>Motor de cobrança dinâmica</h4>
-<p>Acionado na devolução; valor final = base ± ajustes por km, tempo, consumo, infrações e score de condução. É idempotente (evita duplicidade) e auditável por time travel. <strong>Valor: ↑ receita, ↓ contestações.</strong></p>
-<h4>Apoio a emergências (hot path)</h4>
-<p>Borda detecta → <code>alerts.critical</code> → Spark orquestra → resposta (guincho, seguradora, substituto), montando em paralelo o <strong>dossiê de sinistro</strong> com todas as informações à regulação. <strong>Valor: ↓ tempo de resposta.</strong></p>
-
-<h2><span class="n">06</span>Concierge de viagem por IA <span class="ptag b">Parte B</span></h2>
-<p>Assistente de voz cujo <strong>backend</strong> combina Processamento de Linguagem Natural e <strong>RAG</strong> sobre um banco vetorial de POIs, sem chave de LLM paga. O RAG dá <strong>proveniência auditável</strong> e reduz alucinação — a mesma base sustenta os dossiês de emergência.</p>
-<div class="pipe">[<span class="b">Voz</span>] › ASR › [<span class="m">PLN + agente</span> + function calling] › <span class="g">banco vetorial (RAG)</span> › POIs + agenda › TTS + GPS</div>
-<div class="callout plum"><span class="k">Exemplo</span>"Após a reunião, quero almoçar em restaurante típico bem avaliado com estacionamento fácil e, à tarde, ver arte nos meus gostos." → o agente lê a localização, consulta POIs por similaridade e a agenda, monta o roteiro e <strong>injeta os waypoints no GPS</strong>. Privacidade: consentimento, PII, wake-word on-device.</div>
-
-<h2><span class="n">07</span>Casos de uso e rastreabilidade das entidades</h2>
-<p>Três casos reais — crítico, usual e analítico — mostram onde cada entidade modelada aparece; dois apontam para a extensão (✚).</p>
-<table>
-  <thead><tr><th>Entidade (✚ = extensão)</th><th>1 · Colisão (crítico)</th><th>2 · Cobrança (usual)</th><th>3 · Frota (analítico)</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Fato_Sinistro</strong> ✚</td><td>dossiê + resposta</td><td>—</td><td>—</td></tr>
-    <tr><td><strong>Fato_Cobranca</strong> ✚</td><td>recálculo da locação</td><td>valor ± acréscimos</td><td>—</td></tr>
-    <tr><td><strong>Fato_Telemetria_Diaria</strong> ✚</td><td>buffer pré-impacto</td><td>km, velocidade, eventos</td><td>base do score / manutenção</td></tr>
-    <tr><td><strong>Fato_Manutencao</strong> ✚</td><td>—</td><td>—</td><td>prob. de falha → agenda</td></tr>
-    <tr><td>Fato_Movimentacao</td><td>despacho ao pátio</td><td>—</td><td>Markov → reposicionamento</td></tr>
-    <tr><td><strong>Dim_Sensor</strong> ✚ (SCD-2)</td><td>firmware na hora</td><td>—</td><td>saúde do sensor</td></tr>
-    <tr><td><strong>Dim_FaixaConducao</strong> ✚</td><td>—</td><td>Agressivo → tarifa</td><td>perfil por veículo</td></tr>
-    <tr><td><strong>Dim_Tempo_Detalhe</strong> ✚</td><td>minuto 18:23</td><td>janelas da viagem</td><td>faixa horária / pico</td></tr>
+    <tr><td><strong>Frota</strong></td><td>Giro maior por veículo com reposicionamento inteligente.</td><td class="effect">Mais receita sem comprar carros</td></tr>
+    <tr><td><strong>Cobrança</strong></td><td>Captura automática de km, consumo e infrações; zero vazamento.</td><td class="effect">Receita correta por locação</td></tr>
+    <tr><td><strong>Sinistros</strong></td><td>Resposta e dossiê automáticos ao acidente.</td><td class="effect">Menos perda e melhor prêmio de seguro</td></tr>
+    <tr><td><strong>Manutenção</strong></td><td>Previsão de falhas antes da quebra.</td><td class="effect">Menos parada e reparo mais barato</td></tr>
+    <tr><td><strong>Atendimento</strong></td><td>Reserva no app, carro autônomo, sem balcão.</td><td class="effect">Menor custo operacional</td></tr>
+    <tr><td><strong>Dados / nuvem</strong></td><td>Filtrar no veículo em vez de enviar tudo.</td><td class="effect">Corta o maior custo recorrente</td></tr>
   </tbody>
 </table>
 
-<h2><span class="n">08</span>Custos, nuvem e prova de conceito</h2>
-<div class="cards">
-  <div class="cardbox"><span class="tag">Banda / egress</span><h4>Filtrar na borda</h4><p>Não enviar vídeo bruto corta o maior custo recorrente.</p></div>
-  <div class="cardbox blue"><span class="tag">Compute</span><h4>Elasticidade</h4><p>Autoscaling + spot/preemptível; clusters efêmeros no batch.</p></div>
-  <div class="cardbox teal"><span class="tag">Storage</span><h4>Tiering</h4><p>Quente (Redis/Cassandra) vs. frio (Delta/MinIO), TTL, Bronze→Gold.</p></div>
-  <div class="cardbox amber"><span class="tag">Operação</span><h4>Gerenciado vs. próprio</h4><p>Serviços gerenciados reduzem custo; trade-off com lock-in.</p></div>
+<!-- CASOS REAIS -->
+<h2 class="sec">Na prática</h2>
+<div class="rule"></div>
+<p class="sec-lead">Três situações reais mostram o valor no dia a dia — do crítico ao rotineiro.</p>
+<div class="case"><span class="tag">Crítico</span><div><h4>Colisão dentro de um túnel</h4><p>Sem sinal, o carro detecta o impacto e, ao sair, aciona guincho, seguradora e um substituto; o relatório do acidente já sai pronto para a regulação.</p><p class="out">→ Cliente amparado em minutos; sinistro resolvido mais rápido.</p></div></div>
+<div class="case"><span class="tag c2">Rotineiro</span><div><h4>Devolução após direção agressiva</h4><p>A plataforma mede o uso real da viagem e cobra com justiça, com histórico auditável de ponta a ponta.</p><p class="out">→ Receita correta, sem discussão no balcão.</p></div></div>
+<div class="case"><span class="tag c3">Estratégico</span><div><h4>Pico de demanda no aeroporto</h4><p>A plataforma prevê a corrida por carros e reposiciona a frota antes do pico; um veículo com sinal de falha sai para revisão; o cliente VIP recebe um roteiro sob medida.</p><p class="out">→ Mais locações, menos parada e cliente encantado.</p></div></div>
+
+<!-- PROVA + PRÓXIMOS PASSOS -->
+<div class="proof">
+  <div class="eyebrow">Não é conceito — é executável</div>
+  <h3>Construído, testado e fundamentado.</h3>
+  <p>A solução foi implementada como um sistema executável e validado, e cada decisão tem embasamento técnico documentado. A diretoria contrata <strong>resultado</strong>; a engenharia entrega a <strong>prova</strong>.</p>
+  <div class="cta">
+    <div><b>Piloto</b>uma praça, 90 dias</div>
+    <div><b>Medir</b>os 6 indicadores acima</div>
+    <div><b>Escalar</b>para todo o consórcio</div>
+  </div>
 </div>
-<div class="callout teal"><span class="k">Prova de conceito executável</span>O sistema foi implementado em <strong>docker-compose</strong> (Kafka, Flink, Spark, Cassandra, MongoDB, Redis, MinIO, PostgreSQL Gold, Streamlit), com <strong>115 testes unitários</strong> verdes e o DDL do DW estendido validado. Experimentação em <em>free tiers</em>: Dataproc/Flink Playground, Databricks, Atlas, Astra, Redis, DynamoDB.</div>
 
-<h2><span class="n">09</span>Alternativas descartadas</h2>
-<table><thead><tr><th>Opção descartada</th><th>Por que não</th></tr></thead><tbody>
-  <tr><td><strong>Somente Data Warehouse</strong></td><td>Batch e schema-on-write não dão tempo real nem absorvem sensores de alto volume.</td></tr>
-  <tr><td><strong>Somente batch</strong></td><td>Emergências e roteirização exigem segundos/milissegundos.</td></tr>
-  <tr><td><strong>Arquitetura Lambda</strong></td><td>Base de código dupla e risco de divergência; o problema é streaming-first.</td></tr>
-  <tr><td><strong>Banco relacional único</strong></td><td>Não escala a escrita massiva nem entrega cache sub-ms (CAP).</td></tr>
-  <tr><td><strong>Vídeo bruto pela rede</strong></td><td>Banda cara e finita; fica na borda.</td></tr>
-  <tr><td><strong>Hadoop MapReduce clássico</strong></td><td>Alta latência de I/O; o Spark (DAG, in-memory) o substitui.</td></tr>
-</tbody></table>
-
-<h2><span class="n">10</span>Conclusão</h2>
-<p>A solução proposta é uma arquitetura <strong>resiliente, escalável e em tempo real</strong>, orientada a <strong>valor</strong>: filtra na borda, isola fluxos no Kafka, adota <strong>Kappa + Delta Lake</strong>, processa em três regimes (Spark/Flink), persiste de forma poliglota e serve dashboard, cobrança auditável, dossiês e concierge de IA. Ela <strong>envolve e estende o DW</strong> da Avaliação 02 como camada Gold e foi materializada num sistema executável validado, mantendo o custo de nuvem sob controle e movendo os indicadores de negócio do consórcio.</p>
-<p class="small">Fundamentação teórica completa, metodologia detalhada e referências (ABNT): ver o <em>relatório acadêmico</em> que acompanha esta proposta.</p>
+<p class="footnote">Detalhamento técnico da arquitetura em <em>proposta-executiva-tecnica.pdf</em>; fundamentação teórica e referências no <em>relatório acadêmico</em>. Componentes do grupo: Izabela Lima da Silva (DRE 124156557) e Caio Meirelles (DRE 122071557) — MAE016.15912, UFRJ/NCE, 2026.1.</p>
 
 </div>
-<footer class="docfoot"><span>Proposta Executiva · Solução Big Data · Frota Autônoma Conectada</span><span>Izabela Lima da Silva · Caio Meirelles · MAE016 · 2026.1</span></footer>
 </article>
