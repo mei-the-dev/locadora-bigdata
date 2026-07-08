@@ -17,7 +17,7 @@ Na Avaliação 02 o `dw_locadora` é um **Data Warehouse relacional em lote** (P
 
 Para o cenário da **frota de veículos autônomos e conectados** (Avaliação 03), o DW **deixa de ser um sistema isolado e passa a ser a camada GOLD de um Lakehouse** (Bronze → Silver → Gold em Delta Lake sobre MinIO). As novas tabelas Gold **não** são mais carregadas só por batch OLTP: são materializadas por **ELT** a partir do **Silver** (agregados produzidos pelo streaming Flink/Spark sobre a telemetria).
 
-Este documento **estende, não redefine**. As 5 dimensões conformadas e os 3 fatos existentes permanecem intactos; adicionamos **4 dimensões** e **4 fatos** que fecham as lacunas identificadas na análise do modelo atual (grão temporal fino, telemetria, financeiro/cobrança, emergências, manutenção preditiva).
+Este documento **estende, não redefine**. As 5 dimensões conformadas e os 3 fatos existentes permanecem intactos; adicionamos **4 dimensões** e **4 fatos** que fecham as lacunas identificadas na análise do modelo atual (grão temporal fino, telemetria, materialização financeira/cobrança — o `Pagamento` que só existia no OLTP —, emergências, manutenção preditiva).
 
 ### Princípios de projeto mantidos
 
@@ -63,7 +63,7 @@ Este documento **estende, não redefine**. As 5 dimensões conformadas e os 3 fa
 | `Fato_Manutencao` | **Transação** | 1 evento/previsão de manutenção | `custo` (aditiva $), `downtime_horas` (aditiva), `probabilidade_falha` (não-aditiva, só previsões) |
 
 - **`Fato_Telemetria_Diaria`** — Escolhemos o **grão diário por veículo** (snapshot) porque a telemetria por evento (sub-segundo, altíssima cardinalidade) **não** cabe na Gold: ela vive em **Cassandra** e no Bronze/Silver. A Gold recebe o **agregado de janela** que alimenta score de condução e manutenção preditiva. Preserva a compatibilidade com a `Dim_Tempo` (dia) e evita inchar o DW ROLAP.
-- **`Fato_Cobranca`** — Preenche a **lacuna financeira** (hoje todas as medidas são contagens/durações, zero $). É a base da **cobrança automática pós-uso** (R7), que exige **consistência forte/ACID** — daí residir no PostgreSQL Gold. Usa **surrogate de fato** `sk_cobranca` + **dimensão degenerada** `id_locacao` (UNIQUE) porque o grão é exatamente uma locação faturada.
+- **`Fato_Cobranca`** — **Materializa na Gold o pagamento já modelado na Av.02** (a entidade `Pagamento`/`valor` do OLTP da Parte I, esboçada como *Fato_Pagamento*), que o esquema estrela entregue não trouxe como fato, e o **enriquece** com os ajustes dinâmicos pós-uso (km/consumo/infrações/score). É a base da **cobrança automática pós-uso** (R7), que exige **consistência forte/ACID** — daí residir no PostgreSQL Gold. Usa **surrogate de fato** `sk_cobranca` + **dimensão degenerada** `id_locacao` (UNIQUE) porque o grão é exatamente uma locação faturada.
 - **`Fato_Sinistro`** — Base do **dossiê regulatório** (R8). `latitude/longitude` entram como **atributos degenerados** (podem ser promovidos a uma futura `Dim_Geo/Waypoint`). Combinado com `Dim_Sensor` (SCD2) e `Delta time-travel`, reconstrói o estado point-in-time do veículo.
 - **`Fato_Manutencao`** — Suporta **manutenção preditiva**: `tipo_manutencao = 'Preditiva'` carrega `probabilidade_falha` estimada pelo modelo ML featurizado sobre `Fato_Telemetria_Diaria`. `downtime_horas` quantifica indisponibilidade da frota.
 

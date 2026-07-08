@@ -162,8 +162,10 @@ CREATE TABLE Fato_Telemetria_Diaria (
 
 -- ----------------------------------------------------------------------------
 -- Fato_Cobranca : FATO DE TRANSACAO.
---   GRAO = 1 locacao faturada (cobranca automatica pos-uso). Preenche a lacuna
---   FINANCEIRA do modelo atual (todas as medidas de hoje sao contagens/duracoes).
+--   GRAO = 1 locacao faturada (cobranca automatica pos-uso). Materializa na Gold o
+--   PAGAMENTO ja modelado na Av.02 (entidade Pagamento/valor no OLTP da Parte I,
+--   esbocada como Fato_Pagamento) -- que o esquema estrela entregue nao trouxe como
+--   fato -- e o enriquece com os ajustes dinamicos pos-uso (km/consumo/infracoes/score).
 --   Surrogate key de fato (sk_cobranca) + degenerada id_locacao (UNIQUE).
 --   MEDIDAS TODAS ADITIVAS ($): valor_base + acrescimo_km + acrescimo_tempo +
 --     acrescimo_consumo + multa_infracao - desconto = valor_final.

@@ -117,7 +117,7 @@ Marcação: **[NÚCLEO]** vai ao código do `core`; **[OPCIONAL]** entra no perf
 ### 3.2 DW como camada GOLD do Lakehouse + extensão dimensional — **[NÚCLEO]**
 
 O star schema `dw_locadora` vira a **Gold**. Extensões projetadas (detalhe em §4):
-- **Novos fatos:** `Fato_Telemetria` (grão sub-segundo por evento), `Fato_Emergencia`, `Fato_Viagem_Autonoma`, `Fato_Cobranca` (medida financeira, hoje ausente).
+- **Novos fatos:** `Fato_Telemetria` (grão sub-segundo por evento), `Fato_Emergencia`, `Fato_Viagem_Autonoma`, `Fato_Cobranca` (materializa na Gold o `Pagamento` do OLTP, que a estrela da Av.02 não trouxe como fato, e o enriquece com ajustes dinâmicos).
 - **Novas dimensões:** `Dim_Sensor/Dispositivo_Edge`, `Dim_Firmware`, `Dim_Rota/Geo/Waypoint`, `Dim_Tipo_Evento` (severidade). Separar `Dim_Data` + `Dim_Hora` (grão sub-diário) ou usar timestamp de alta resolução.
 - **SCD Tipo 2** nas dimensões que exigem auditoria (Veículo/Firmware/Cliente): `valid_from/valid_to/is_current`, SK estáveis — indispensável para ingestão incremental/streaming e para o dossiê regulatório point-in-time (hoje tudo é Tipo 1 full-refresh).
 - **CUBE/agregados:** cubo frota × tempo × pátio × empresa com `ALL` para a visão executiva (Gray 1997), materializado como summary tables na Gold (Chaudhuri & Dayal 1997 — views materializadas; roll-up só de função distributiva/algébrica).

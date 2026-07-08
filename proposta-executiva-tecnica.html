@@ -89,13 +89,14 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
 
 <p class="lead">Esta proposta especifica uma solução de <strong>Big Data</strong> para monitorar, em tempo real, uma frota de veículos autônomos e conectados de um consórcio de seis locadoras. O documento é orientado a <strong>decisão e valor de negócio</strong>: apresenta o problema, o retorno esperado, a arquitetura e a justificativa objetiva de cada escolha. A fundamentação teórica aprofundada e as referências estão consolidadas no <em>relatório acadêmico</em> que acompanha o trabalho.</p>
 
-<div class="callout"><span class="k">Divisão do trabalho (defesa oral)</span><strong>Parte A — Infraestrutura & fluxo</strong> (borda, ingestão, arquitetura Kappa, processamento): seções 4. <strong>Parte B — Armazenamento, interface & IA</strong> (persistência poliglota, dashboard, cobrança, concierge): seções 5–6. Emergências (hot path) é a ponte.</div>
+<div class="callout"><span class="k">Divisão do trabalho (defesa oral)</span><strong>Parte A — Infraestrutura & fluxo</strong> (borda, ingestão, arquitetura Kappa, processamento, robustez): seções 3–5. <strong>Parte B — Armazenamento, interface & IA</strong> (persistência poliglota, dashboard, cobrança, concierge): seções 6–7. Emergências (hot path) é a ponte.</div>
 
 <div class="toc"><h3>Sumário</h3><ol>
   <li>O problema e o valor de negócio</li>
   <li>Do DW (Avaliação 02) ao Big Data e a extensão do modelo</li>
   <li>Visão da solução (pipeline)</li>
   <li>Decisões de arquitetura e justificativas</li>
+  <li>Robustez: tratamento de casos limítrofes</li>
   <li>Serving: dashboard, cobrança e emergências</li>
   <li>Concierge de viagem por IA</li>
   <li>Casos de uso e rastreabilidade das entidades</li>
@@ -118,7 +119,7 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
 
 <h2><span class="n">02</span>Do DW (Avaliação 02) ao Big Data e a extensão do modelo</h2>
 <p>Na etapa anterior modelamos um <strong>Data Warehouse</strong> dimensional em PostgreSQL — esquema estrela com os fatos <strong>Reserva</strong>, <strong>Locação</strong> e <strong>Movimentação</strong> sobre dimensões conformadas, integrando 4 fontes OLTP, com previsão de ocupação de pátios por <strong>cadeias de Markov</strong>. Esse modelo é batch (D-1) e não cobre a frota conectada.</p>
-<p>Em vez de manter DW e data lake separados, adotamos o <strong>Lakehouse</strong>: o esquema estrela passa a ser a camada <strong>Gold</strong>, alimentada por ELT a partir do streaming. Estendemos o modelo com quatro novos fatos (<strong>Telemetria, Cobrança, Sinistro, Manutenção</strong>) e novas dimensões (<strong>Tempo_Detalhe</strong> de grão minuto, <strong>Sensor</strong> SCD-2, TipoEvento, FaixaCondução). O DDL da extensão (<code>06_ddl_extensao.sql</code>) foi <strong>validado</strong> em PostgreSQL. <span class="cite">(Detalhamento na seção 4 do relatório acadêmico.)</span></p>
+<p>Em vez de manter DW e data lake separados, adotamos o <strong>Lakehouse</strong>: o esquema estrela passa a ser a camada <strong>Gold</strong>, alimentada por ELT a partir do streaming. Estendemos o modelo com quatro novos fatos (<strong>Telemetria, Cobrança, Sinistro, Manutenção</strong>) e novas dimensões (<strong>Tempo_Detalhe</strong> de grão minuto, <strong>Sensor</strong> SCD-2, TipoEvento, FaixaCondução). A <strong>Fato_Cobranca</strong> dá <strong>continuidade</strong> ao pagamento já modelado na Avaliação 02 — a entidade <code>Pagamento</code> (com <code>valor</code>) do OLTP da Parte I, esboçada como <em>Fato_Pagamento</em>: traz esse valor para a camada analítica (Gold), no grão de uma locação faturada, e o enriquece com os ajustes dinâmicos pós-uso (km, consumo, infrações, score de condução) que a frota conectada passa a exigir. O DDL da extensão (<code>06_ddl_extensao.sql</code>) foi <strong>validado</strong> em PostgreSQL. <span class="cite">(Detalhamento na seção 4 do relatório acadêmico.)</span></p>
 
 <h2><span class="n">03</span>Visão da solução <span class="ptag a">Parte A</span></h2>
 <p>O pipeline cobre <strong>ingestão → processamento → armazenamento → visualização</strong>, com três caminhos de latências distintas.</p>
@@ -130,6 +131,7 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
 &nbsp;&nbsp;└─ <span class="g">COLD</span> Delta Bronze → <span class="g">Spark batch</span> → km, manutenção, Markov<br>
 [<span class="m">Delta Lake</span> Bronze→Silver→<span class="g">Gold (DW estendido)</span>] › [NoSQL: Cassandra · Mongo · Redis] › [Streamlit · Cobrança · Concierge]
 </div>
+<p class="small">A arquitetura de referência acima <strong>detalha e amplia o pipeline-base do grupo</strong> (Sensores → Kafka → Flink → NoSQL → Dashboard), acrescentando os regimes Spark (lote histórico e <em>hot path</em> de emergências) e o Lakehouse Delta, que garante ACID entre lote e streaming.</p>
 
 <h2><span class="n">04</span>Decisões de arquitetura e justificativas <span class="ptag a">Parte A</span></h2>
 <p>Cada camada resolve um requisito não funcional específico. As justificativas abaixo são objetivas; o embasamento teórico completo está no relatório acadêmico.</p>
@@ -139,26 +141,46 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
     <tr><td><strong>Borda filtra</strong> (Avro/MQTT)</td><td>Banda é o recurso escasso; só agregados e exceções trafegam. A reação sub-segundo à colisão é embarcada. <span class="cite">(Dean & Ghemawat 2004)</span></td><td>Enviar vídeo bruto</td></tr>
     <tr><td><strong>Kafka</strong> (log particionado)</td><td>Tópicos isolados (telemetria vs. alarme); partição por <code>vehicle_id</code> dá ordem por veículo; replay e durabilidade sob concorrência. <span class="cite">(Kreps 2011)</span></td><td>HTTP síncrono no banco</td></tr>
     <tr><td><strong>Kappa + Delta Lake</strong></td><td>Um só código; o Delta traz ACID e time travel ao object store, unificando lote e streaming. <span class="cite">(Fragkoulis 2020; Armbrust 2020)</span></td><td>Lambda (código duplo)</td></tr>
-    <tr><td><strong>3 regimes</strong> (Spark/Flink)</td><td>SLAs distintos: vazão histórica (Spark batch), emergência (Spark Streaming), latência mínima com watermarks (Flink). <span class="cite">(Zaharia 2012/13; Carbone 2015)</span></td><td>Um motor único</td></tr>
+    <tr><td><strong>3 regimes</strong> (Spark/Flink)</td><td>SLAs distintos: vazão histórica (Spark batch, que <strong>generaliza o MapReduce</strong> — map/reduce dá paralelismo e tolerância por re-execução), emergência (Spark Streaming) e latência mínima com watermarks (Flink). <span class="cite">(Dean & Ghemawat 2004; Zaharia 2012/13; Carbone 2015)</span></td><td>Um motor único</td></tr>
     <tr><td><strong>Persistência poliglota</strong></td><td>Teorema CAP: cada dado no banco certo — Cassandra (telemetria/AP), Mongo (cadastrais), Redis (cache), PostgreSQL/Delta (cobrança/CP). <span class="cite">(Gilbert & Lynch 2002)</span></td><td>Banco relacional único</td></tr>
   </tbody>
 </table>
 <div class="callout"><span class="k">Conectividade e ordenação</span>Túneis e zonas de sombra entregam dados fora de ordem. A solução combina compressão e <em>store-and-forward</em> na borda, ordem por <code>vehicle_id</code> no Kafka e <strong>event-time + watermarks</strong> no Flink, garantindo a ordenação estrita por veículo e timestamp mesmo sob rede oscilante.</div>
 
-<h2><span class="n">05</span>Serving: dashboard, cobrança e emergências <span class="ptag b">Parte B</span></h2>
+<h2><span class="n">05</span>Robustez: tratamento de casos limítrofes <span class="ptag a">Parte A</span></h2>
+<p>O enunciado exige operar sob <strong>banda finita</strong>, <strong>alta concorrência sem perda de pacotes</strong> e <strong>ordenação estrita por veículo e timestamp mesmo sob forte estresse</strong>. A tabela mapeia cada situação-limite ao mecanismo que a trata: nenhum dado é perdido e nenhum resultado fica inconsistente.</p>
+<table>
+  <thead><tr><th style="width:37%">Situação-limite</th><th>Como o sistema lida</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Túnel / zona de sombra</strong> (queda de conexão)</td><td>A borda faz <em>store-and-forward</em> (buffer local persistente) e drena em ordem ao reconectar. Colisão sem sinal: <em>ring buffer</em> local (~30 s) e o <em>payload</em> de emergência prioriza a rede assim que ela volta. <strong>Zero perda.</strong></td></tr>
+    <tr><td><strong>Dados fora de ordem / atrasados</strong></td><td>Ordem por <code>vehicle_id</code> na partição do Kafka + <strong>event-time e watermarks</strong> no Flink reordenam. Eventos além da tolerância (<em>allowed lateness</em>) vão para <em>side output</em> e são reconciliados no lote sobre o Lakehouse — <strong>nunca descartados</strong>.</td></tr>
+    <tr><td><strong>Relógio do veículo dessincronizado</strong> (<em>clock skew</em>)</td><td>Timestamp carimbado na borda; processamento por <em>event-time</em>; as watermarks toleram o desvio e a conformação no Silver normaliza o eixo temporal.</td></tr>
+    <tr><td><strong>Duplicatas e reprocessamento</strong> (<em>replay</em>)</td><td>Idempotência por chave (<code>vehicle_id+timestamp</code>; <code>id_locacao</code> na cobrança). A cobrança é <strong>exactly-once</strong> (transação do Delta) — jamais cobra em dobro, mesmo com reenvio.</td></tr>
+    <tr><td><strong>Pico de carga / surto</strong> (tempestade, evento na cidade)</td><td>O Kafka absorve como <em>buffer</em> durável; o particionamento escala consumidores e o <em>autoscaling</em> acompanha; <em>backpressure</em> no Flink evita colapso. O tópico <code>alerts.critical</code> é isolado — o alarme nunca fica preso atrás da telemetria.</td></tr>
+    <tr><td><strong>Falha de nó ou <em>broker</em></strong></td><td>Replicação/ISR no Kafka; o RDD recompõe partições por <strong>linhagem</strong>; o Delta garante ACID (sem estado corrompido); serviços <em>stateless</em> reescalonam.</td></tr>
+    <tr><td><strong>Sensor defeituoso / firmware divergente</strong></td><td>O <em>Schema Registry</em> valida o Avro; mensagens malformadas vão para <em>dead-letter</em> (o Bronze guarda o bruto para reprocesso). A <code>Dim_Sensor</code> (SCD-2) sabe qual firmware rodava; leituras implausíveis são marcadas.</td></tr>
+    <tr><td><strong>Evento tardio após fechar a fatura</strong> (cobrança em disputa)</td><td>O <em>time travel</em> do Delta + janela de conciliação permitem um ajuste posterior <strong>auditável</strong> (nova versão da cobrança) sem reescrever o histórico.</td></tr>
+    <tr><td><strong>Partição de rede</strong> (CAP)</td><td>A telemetria (AP) segue aceitando escrita (consistência eventual); a cobrança e o dossiê (CP) preferem consistência e aguardam a reconciliação — evitando fatura ou laudo inconsistente.</td></tr>
+    <tr><td><strong>Emergências simultâneas em massa</strong></td><td>O <em>hot path</em> prioriza <code>alerts.critical</code> e escala horizontalmente; o SLA de resposta é preservado mesmo com múltiplos sinistros concorrentes.</td></tr>
+    <tr><td><strong>Concierge: pergunta ambígua ou sem dado</strong></td><td>O RAG responde com <strong>proveniência</strong> (cita a fonte) e, na dúvida, pede esclarecimento em vez de alucinar; sem POI adequado, oferece alternativa. A base vetorial é versionada.</td></tr>
+  </tbody>
+</table>
+<div class="callout teal"><span class="k">Garantia de projeto</span>Todo caminho de dado tem resposta para a falha: <strong>durabilidade</strong> (Kafka/Delta/store-and-forward), <strong>ordem</strong> (partição + watermarks), <strong>idempotência</strong> (dedup/exactly-once) e <strong>reconciliação</strong> (Lakehouse + time travel). É o que sustenta "sem perda de pacotes" e "ordenação estrita sob estresse".</div>
+
+<h2><span class="n">06</span>Serving: dashboard, cobrança e emergências <span class="ptag b">Parte B</span></h2>
 <h4>Dashboard (Streamlit)</h4>
-<p>Painel OLAP sobre a camada <strong>Gold</strong> (nunca sobre os OLTP), atualizado em quase tempo real via Redis. Traz mapa geoespacial, cartões consolidados (veículos ativos, bateria média, alertas mecânicos), <strong>triagem de incidentes que pisca em vermelho</strong>, e painéis de reservas, financeiro, viagens e oficina.</p>
+<p>Painel OLAP sobre a camada <strong>Gold</strong> (nunca sobre os OLTP), atualizado em quase tempo real via Redis. Traz mapa geoespacial com <strong>trânsito, engarrafamentos, meteorologia e eventos/alertas da cidade</strong> (fontes externas que afetam a circulação da frota), cartões consolidados (veículos ativos, bateria média, alertas mecânicos), <strong>triagem de incidentes que pisca em vermelho</strong>, e painéis de reservas, locações, financeiro/cobranças, emergências, viagens em andamento e oficina. Esse mesmo tempo real <strong>torna a reserva mais simples e objetiva</strong> (necessidade 2 do enunciado): o app exibe disponibilidade e ETA reais para o cliente escolher melhor.</p>
 <h4>Motor de cobrança dinâmica</h4>
 <p>Acionado na devolução; valor final = base ± ajustes por km, tempo, consumo, infrações e score de condução. É idempotente (evita duplicidade) e auditável por time travel. <strong>Valor: ↑ receita, ↓ contestações.</strong></p>
 <h4>Apoio a emergências (hot path)</h4>
 <p>Borda detecta → <code>alerts.critical</code> → Spark orquestra → resposta (guincho, seguradora, substituto), montando em paralelo o <strong>dossiê de sinistro</strong> com todas as informações à regulação. <strong>Valor: ↓ tempo de resposta.</strong></p>
 
-<h2><span class="n">06</span>Concierge de viagem por IA <span class="ptag b">Parte B</span></h2>
+<h2><span class="n">07</span>Concierge de viagem por IA <span class="ptag b">Parte B</span></h2>
 <p>Assistente de voz cujo <strong>backend</strong> combina Processamento de Linguagem Natural e <strong>RAG</strong> sobre um banco vetorial de POIs, sem chave de LLM paga. O RAG dá <strong>proveniência auditável</strong> e reduz alucinação — a mesma base sustenta os dossiês de emergência.</p>
 <div class="pipe">[<span class="b">Voz</span>] › ASR › [<span class="m">PLN + agente</span> + function calling] › <span class="g">banco vetorial (RAG)</span> › POIs + agenda › TTS + GPS</div>
 <div class="callout plum"><span class="k">Exemplo</span>"Após a reunião, quero almoçar em restaurante típico bem avaliado com estacionamento fácil e, à tarde, ver arte nos meus gostos." → o agente lê a localização, consulta POIs por similaridade e a agenda, monta o roteiro e <strong>injeta os waypoints no GPS</strong>. Privacidade: consentimento, PII, wake-word on-device.</div>
 
-<h2><span class="n">07</span>Casos de uso e rastreabilidade das entidades</h2>
+<h2><span class="n">08</span>Casos de uso e rastreabilidade das entidades</h2>
 <p>Três casos reais — crítico, usual e analítico — mostram onde cada entidade modelada aparece; dois apontam para a extensão (✚).</p>
 <table>
   <thead><tr><th>Entidade (✚ = extensão)</th><th>1 · Colisão (crítico)</th><th>2 · Cobrança (usual)</th><th>3 · Frota (analítico)</th></tr></thead>
@@ -174,7 +196,7 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
   </tbody>
 </table>
 
-<h2><span class="n">08</span>Custos, nuvem e prova de conceito</h2>
+<h2><span class="n">09</span>Custos, nuvem e prova de conceito</h2>
 <div class="cards">
   <div class="cardbox"><span class="tag">Banda / egress</span><h4>Filtrar na borda</h4><p>Não enviar vídeo bruto corta o maior custo recorrente.</p></div>
   <div class="cardbox blue"><span class="tag">Compute</span><h4>Elasticidade</h4><p>Autoscaling + spot/preemptível; clusters efêmeros no batch.</p></div>
@@ -183,7 +205,7 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
 </div>
 <div class="callout teal"><span class="k">Prova de conceito executável</span>O sistema foi implementado em <strong>docker-compose</strong> (Kafka, Flink, Spark, Cassandra, MongoDB, Redis, MinIO, PostgreSQL Gold, Streamlit), com <strong>115 testes unitários</strong> verdes e o DDL do DW estendido validado. Experimentação em <em>free tiers</em>: Dataproc/Flink Playground, Databricks, Atlas, Astra, Redis, DynamoDB.</div>
 
-<h2><span class="n">09</span>Alternativas descartadas</h2>
+<h2><span class="n">10</span>Alternativas descartadas</h2>
 <table><thead><tr><th>Opção descartada</th><th>Por que não</th></tr></thead><tbody>
   <tr><td><strong>Somente Data Warehouse</strong></td><td>Batch e schema-on-write não dão tempo real nem absorvem sensores de alto volume.</td></tr>
   <tr><td><strong>Somente batch</strong></td><td>Emergências e roteirização exigem segundos/milissegundos.</td></tr>
@@ -193,7 +215,7 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
   <tr><td><strong>Hadoop MapReduce clássico</strong></td><td>Alta latência de I/O; o Spark (DAG, in-memory) o substitui.</td></tr>
 </tbody></table>
 
-<h2><span class="n">10</span>Conclusão</h2>
+<h2><span class="n">11</span>Conclusão</h2>
 <p>A solução proposta é uma arquitetura <strong>resiliente, escalável e em tempo real</strong>, orientada a <strong>valor</strong>: filtra na borda, isola fluxos no Kafka, adota <strong>Kappa + Delta Lake</strong>, processa em três regimes (Spark/Flink), persiste de forma poliglota e serve dashboard, cobrança auditável, dossiês e concierge de IA. Ela <strong>envolve e estende o DW</strong> da Avaliação 02 como camada Gold e foi materializada num sistema executável validado, mantendo o custo de nuvem sob controle e movendo os indicadores de negócio do consórcio.</p>
 <p class="small">Fundamentação teórica completa, metodologia detalhada e referências (ABNT): ver o <em>relatório acadêmico</em> que acompanha esta proposta.</p>
 
