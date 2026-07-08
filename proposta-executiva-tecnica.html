@@ -58,6 +58,16 @@ thead th{ background:var(--paper-2); font-weight:600; color:var(--ink); font-siz
 .kpi{ display:inline-block; font-family:var(--font-mono); font-size:0.68rem; font-weight:700; padding:0.1em 0.5em; border-radius:3px; background:var(--teal-s); color:var(--teal); margin-top:0.5em; }
 .pipe{ font-family:var(--font-mono); font-size:0.8rem; background:var(--paper-2); color:var(--ink-2); border:1px solid var(--rule-2); border-radius:9px; padding:15px 20px; margin:1em 0; line-height:1.85; overflow-x:auto; }
 .pipe .b{ color:var(--accent); font-weight:500; } .pipe .y{ color:var(--amber); font-weight:500; } .pipe .g{ color:var(--teal); font-weight:500; } .pipe .m{ color:var(--plum); font-weight:500; } .pipe .dim{ color:var(--faint); }
+figure{ margin:1.2em 0; break-inside:avoid; }
+figure.fig{ background:var(--paper); border:1px solid var(--rule); border-radius:11px; padding:16px 18px 10px; }
+figure.fig svg{ display:block; width:100%; height:auto; }
+figcaption{ font-family:var(--font-sans); font-size:0.8rem; color:var(--muted); font-style:italic; text-align:center; margin-top:0.5em; }
+.prodfig{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:1.1em 0; }
+.prodfig figcaption{ grid-column:1 / -1; margin-top:0.1em; }
+.prod{ border:1px solid var(--rule); border-radius:11px; padding:12px 14px 14px; background:var(--card); text-align:center; break-inside:avoid; box-shadow:0 1px 2px rgba(26,27,30,0.04); }
+.prod svg{ width:100%; height:92px; display:block; }
+.prod h4{ font-family:var(--font-serif); font-size:1.02rem; margin:0.5em 0 0.1em; color:var(--ink); }
+.prod p{ font-size:0.82rem; color:var(--muted); margin:0; line-height:1.35; }
 .refs{ font-size:0.82rem; } .refs p{ margin:0.3em 0; padding-left:1.4em; text-indent:-1.4em; } .refs .a{ color:var(--ink); font-weight:600; }
 footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border-top:1px solid var(--rule); display:flex; justify-content:space-between; }
 @media print{
@@ -123,14 +133,58 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
 
 <h2><span class="n">03</span>Visão da solução <span class="ptag a">Parte A</span></h2>
 <p>O pipeline cobre <strong>ingestão → processamento → armazenamento → visualização</strong>, com três caminhos de latências distintas.</p>
-<div class="pipe">
-<span class="dim"># Pipeline fim a fim</span><br>
-[<span class="b">Borda/Edge</span> (Avro)] › [<span class="b">MQTT</span> › ponte › <span class="b">Kafka</span> (telemetry.raw | <span class="y">alerts.critical</span>)] ›<br>
-&nbsp;&nbsp;├─ <span class="y">HOT</span>&nbsp; colisão → <span class="y">Spark Streaming</span> → despacho + dossiê<br>
-&nbsp;&nbsp;├─ <span class="b">WARM</span> telemetria 1s → <span class="b">Flink</span> (event-time/watermarks) → rotas, score<br>
-&nbsp;&nbsp;└─ <span class="g">COLD</span> Delta Bronze → <span class="g">Spark batch</span> → km, manutenção, Markov<br>
-[<span class="m">Delta Lake</span> Bronze→Silver→<span class="g">Gold (DW estendido)</span>] › [NoSQL: Cassandra · Mongo · Redis] › [Streamlit · Cobrança · Concierge]
-</div>
+<figure class="fig">
+<svg viewBox="0 0 1000 296" role="img" aria-label="Diagrama de como o resultado é gerado, da borda ao serving" style="font-family:'Inter',system-ui,sans-serif">
+  <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0L6,3L0,6Z" fill="#9a9488"/></marker></defs>
+  <!-- arrows first (under boxes) -->
+  <line x1="156" y1="155" x2="180" y2="155" stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="332" y1="155" x2="356" y2="66"  stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="332" y1="155" x2="356" y2="155" stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="332" y1="155" x2="356" y2="244" stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="508" y1="66"  x2="532" y2="150" stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="508" y1="155" x2="532" y2="155" stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="508" y1="244" x2="532" y2="162" stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="684" y1="155" x2="708" y2="155" stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="840" y1="155" x2="856" y2="155" stroke="#9a9488" stroke-width="1.5" marker-end="url(#ar)"/>
+  <!-- Z1 Borda -->
+  <rect x="6" y="120" width="150" height="70" rx="9" fill="#fff" stroke="#cec9b8"/>
+  <text x="81" y="150" text-anchor="middle" font-size="14" font-weight="600" fill="#26418f">Borda / Edge</text>
+  <text x="81" y="169" text-anchor="middle" font-size="10.5" fill="#656974">Avro · filtra · 2 fluxos</text>
+  <!-- Z2 Kafka -->
+  <rect x="182" y="120" width="150" height="70" rx="9" fill="#fff" stroke="#cec9b8"/>
+  <text x="257" y="145" text-anchor="middle" font-size="14" font-weight="600" fill="#26418f">Apache Kafka</text>
+  <text x="257" y="162" text-anchor="middle" font-size="9.5" fill="#656974">telemetry.raw</text>
+  <text x="257" y="177" text-anchor="middle" font-size="9.5" fill="#9a5a12">alerts.critical</text>
+  <!-- Z3 processamento -->
+  <rect x="358" y="38" width="150" height="56" rx="9" fill="#fff" stroke="#cec9b8"/>
+  <text x="433" y="62" text-anchor="middle" font-size="12.5" font-weight="600" fill="#9a5a12">Spark Streaming</text>
+  <text x="433" y="79" text-anchor="middle" font-size="9.5" fill="#656974">HOT · emergências</text>
+  <rect x="358" y="127" width="150" height="56" rx="9" fill="#fff" stroke="#cec9b8"/>
+  <text x="433" y="151" text-anchor="middle" font-size="12.5" font-weight="600" fill="#26418f">Apache Flink</text>
+  <text x="433" y="168" text-anchor="middle" font-size="9.5" fill="#656974">WARM · rotas / score</text>
+  <rect x="358" y="216" width="150" height="56" rx="9" fill="#fff" stroke="#cec9b8"/>
+  <text x="433" y="240" text-anchor="middle" font-size="12.5" font-weight="600" fill="#0f6f52">Spark batch</text>
+  <text x="433" y="257" text-anchor="middle" font-size="9.5" fill="#656974">COLD · km · Markov</text>
+  <!-- Z4 Delta -->
+  <rect x="534" y="110" width="150" height="90" rx="9" fill="#fff" stroke="#cec9b8"/>
+  <text x="609" y="128" text-anchor="middle" font-size="12.5" font-weight="600" fill="#6d2f86">Delta Lake</text>
+  <rect x="546" y="136" width="126" height="15" rx="3" fill="#f5ecd9"/><text x="609" y="147" text-anchor="middle" font-size="8.5" fill="#9a5a12">Bronze (bruto)</text>
+  <rect x="546" y="155" width="126" height="15" rx="3" fill="#eeebe0"/><text x="609" y="166" text-anchor="middle" font-size="8.5" fill="#656974">Silver (conformado)</text>
+  <rect x="546" y="174" width="126" height="16" rx="3" fill="#e4f0ea"/><text x="609" y="185" text-anchor="middle" font-size="8.5" fill="#0f6f52">Gold — DW estendido</text>
+  <!-- Z5 NoSQL -->
+  <rect x="710" y="120" width="130" height="70" rx="9" fill="#fff" stroke="#cec9b8"/>
+  <text x="775" y="145" text-anchor="middle" font-size="13" font-weight="600" fill="#26418f">NoSQL</text>
+  <text x="775" y="162" text-anchor="middle" font-size="9.5" fill="#656974">Cassandra · Mongo</text>
+  <text x="775" y="177" text-anchor="middle" font-size="9.5" fill="#656974">Redis (cache)</text>
+  <!-- Z6 Serving -->
+  <rect x="858" y="110" width="136" height="90" rx="9" fill="#26418f"/>
+  <text x="926" y="131" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Serving</text>
+  <text x="926" y="150" text-anchor="middle" font-size="10" fill="#dfe6f4">Dashboard</text>
+  <text x="926" y="167" text-anchor="middle" font-size="10" fill="#dfe6f4">Cobrança</text>
+  <text x="926" y="184" text-anchor="middle" font-size="10" fill="#dfe6f4">Concierge (IA)</text>
+</svg>
+<figcaption>Figura 1 — Como o resultado é gerado: da borda à decisão de negócio, pelos três caminhos (HOT · WARM · COLD).</figcaption>
+</figure>
 <p class="small">A arquitetura de referência acima <strong>detalha e amplia o pipeline-base do grupo</strong> (Sensores → Kafka → Flink → NoSQL → Dashboard), acrescentando os regimes Spark (lote histórico e <em>hot path</em> de emergências) e o Lakehouse Delta, que garante ACID entre lote e streaming.</p>
 
 <h2><span class="n">04</span>Decisões de arquitetura e justificativas <span class="ptag a">Parte A</span></h2>
@@ -168,6 +222,57 @@ footer.docfoot{ padding:22px 66px; color:var(--muted); font-size:0.78rem; border
 <div class="callout teal"><span class="k">Garantia de projeto</span>Todo caminho de dado tem resposta para a falha: <strong>durabilidade</strong> (Kafka/Delta/store-and-forward), <strong>ordem</strong> (partição + watermarks), <strong>idempotência</strong> (dedup/exactly-once) e <strong>reconciliação</strong> (Lakehouse + time travel). É o que sustenta "sem perda de pacotes" e "ordenação estrita sob estresse".</div>
 
 <h2><span class="n">06</span>Serving: dashboard, cobrança e emergências <span class="ptag b">Parte B</span></h2>
+<figure class="prodfig">
+  <div class="prod">
+    <svg viewBox="0 0 220 96" role="img" aria-label="Painel de monitoramento" style="font-family:'Inter',sans-serif">
+      <rect x="8" y="6" width="204" height="84" rx="8" fill="#fff" stroke="#cec9b8"/>
+      <rect x="8" y="6" width="204" height="15" rx="8" fill="#f5f3ec"/><rect x="8" y="14" width="204" height="7" fill="#f5f3ec"/>
+      <circle cx="20" cy="13.5" r="2.2" fill="#a63142"/><circle cx="28" cy="13.5" r="2.2" fill="#9a5a12"/><circle cx="36" cy="13.5" r="2.2" fill="#0f6f52"/>
+      <rect x="16" y="27" width="92" height="56" rx="4" fill="#e9edf9"/>
+      <path d="M20,55 Q46,40 72,58 T104,50" stroke="#26418f" stroke-width="1" fill="none" opacity="0.45"/>
+      <circle cx="34" cy="48" r="3" fill="#26418f"/><circle cx="60" cy="61" r="3" fill="#0f6f52"/><circle cx="88" cy="45" r="3" fill="#26418f"/><circle cx="72" cy="74" r="3.6" fill="#a63142"/>
+      <rect x="116" y="27" width="88" height="15" rx="3" fill="#f5f3ec"/><rect x="121" y="32" width="34" height="5" rx="2.5" fill="#26418f"/>
+      <rect x="116" y="46" width="88" height="15" rx="3" fill="#f5f3ec"/><rect x="121" y="51" width="46" height="5" rx="2.5" fill="#0f6f52"/>
+      <rect x="116" y="65" width="88" height="18" rx="3" fill="#f5f3ec"/>
+      <rect x="122" y="72" width="8" height="9" fill="#26418f"/><rect x="135" y="68" width="8" height="13" fill="#26418f"/><rect x="148" y="74" width="8" height="7" fill="#0f6f52"/><rect x="161" y="66" width="8" height="15" fill="#26418f"/><rect x="174" y="70" width="8" height="11" fill="#0f6f52"/>
+    </svg>
+    <h4>Dashboard em tempo real</h4><p>Frota, financeiro, emergências, viagens e oficina.</p>
+  </div>
+  <div class="prod">
+    <svg viewBox="0 0 220 96" role="img" aria-label="Cobrança dinâmica" style="font-family:'Inter',sans-serif">
+      <rect x="66" y="6" width="88" height="84" rx="6" fill="#fff" stroke="#cec9b8"/>
+      <rect x="78" y="16" width="64" height="9" rx="2" fill="#26418f"/>
+      <line x1="78" y1="38" x2="126" y2="38" stroke="#cec9b8"/><rect x="132" y="34" width="12" height="6" rx="2" fill="#656974"/>
+      <line x1="78" y1="50" x2="126" y2="50" stroke="#cec9b8"/><rect x="132" y="46" width="12" height="6" rx="2" fill="#656974"/>
+      <line x1="78" y1="62" x2="126" y2="62" stroke="#cec9b8"/><rect x="132" y="58" width="12" height="6" rx="2" fill="#9a5a12"/>
+      <rect x="78" y="72" width="64" height="12" rx="3" fill="#e4f0ea"/><text x="82" y="81" font-size="8" font-weight="700" fill="#0f6f52">Total R$</text>
+      <circle cx="150" cy="18" r="13" fill="#0f6f52"/><text x="150" y="22.5" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">%</text>
+    </svg>
+    <h4>Cobrança dinâmica</h4><p>Valor por uso real, justo e auditável.</p>
+  </div>
+  <div class="prod">
+    <svg viewBox="0 0 220 96" role="img" aria-label="Resposta a sinistros e dossiê" style="font-family:'Inter',sans-serif">
+      <path d="M44,14 L70,66 L18,66 Z" fill="#f5ecd9" stroke="#9a5a12" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="42" y="30" width="4" height="18" rx="2" fill="#9a5a12"/><circle cx="44" cy="57" r="2.6" fill="#9a5a12"/>
+      <rect x="98" y="12" width="86" height="76" rx="5" fill="#fff" stroke="#cec9b8"/>
+      <rect x="110" y="24" width="46" height="7" rx="2" fill="#26418f"/>
+      <line x1="110" y1="42" x2="172" y2="42" stroke="#cec9b8"/><line x1="110" y1="52" x2="172" y2="52" stroke="#cec9b8"/><line x1="110" y1="62" x2="156" y2="62" stroke="#cec9b8"/>
+      <circle cx="168" cy="74" r="14" fill="#0f6f52"/><path d="M161,74 l5,5 l9,-11" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h4>Resposta a sinistros</h4><p>Socorro em segundos + dossiê regulatório.</p>
+  </div>
+  <div class="prod">
+    <svg viewBox="0 0 220 96" role="img" aria-label="Concierge de viagem por IA" style="font-family:'Inter',sans-serif">
+      <rect x="14" y="16" width="96" height="50" rx="12" fill="#e9edf9" stroke="#26418f"/>
+      <path d="M32,66 l0,15 l17,-15 Z" fill="#e9edf9" stroke="#26418f"/>
+      <rect x="30" y="38" width="5" height="10" rx="2.5" fill="#26418f"/><rect x="42" y="32" width="5" height="22" rx="2.5" fill="#26418f"/><rect x="54" y="26" width="5" height="34" rx="2.5" fill="#6d2f86"/><rect x="66" y="33" width="5" height="20" rx="2.5" fill="#26418f"/><rect x="78" y="29" width="5" height="28" rx="2.5" fill="#26418f"/><rect x="90" y="40" width="5" height="6" rx="2.5" fill="#26418f"/>
+      <path d="M138,80 Q150,42 180,46 T206,20" stroke="#6d2f86" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+      <circle cx="138" cy="80" r="5" fill="#6d2f86"/><circle cx="206" cy="20" r="5" fill="#6d2f86"/><circle cx="206" cy="20" r="1.8" fill="#fff"/>
+    </svg>
+    <h4>Concierge de IA</h4><p>Roteiro por voz com RAG e proveniência.</p>
+  </div>
+  <figcaption>Figura 2 — Principais produtos entregues ao consórcio.</figcaption>
+</figure>
 <h4>Dashboard (Streamlit)</h4>
 <p>Painel OLAP sobre a camada <strong>Gold</strong> (nunca sobre os OLTP), atualizado em quase tempo real via Redis. Traz mapa geoespacial com <strong>trânsito, engarrafamentos, meteorologia e eventos/alertas da cidade</strong> (fontes externas que afetam a circulação da frota), cartões consolidados (veículos ativos, bateria média, alertas mecânicos), <strong>triagem de incidentes que pisca em vermelho</strong>, e painéis de reservas, locações, financeiro/cobranças, emergências, viagens em andamento e oficina. Esse mesmo tempo real <strong>torna a reserva mais simples e objetiva</strong> (necessidade 2 do enunciado): o app exibe disponibilidade e ETA reais para o cliente escolher melhor.</p>
 <h4>Motor de cobrança dinâmica</h4>
