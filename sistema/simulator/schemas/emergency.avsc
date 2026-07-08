@@ -1,0 +1,20 @@
+{
+  "type": "record",
+  "name": "Emergencia",
+  "namespace": "frota.avro",
+  "doc": "Evento de emergencia/sinistro detectado na borda (colisao, pane, bateria critica). Vai ao topico isolado `emergency` (hot path Spark + Redis; SLA p99.9 - DeCandia 2007). Base do Fato_Sinistro e do dossie regulatorio (R8).",
+  "fields": [
+    {"name": "vehicle_id", "type": "string"},
+    {"name": "empresa", "type": "string"},
+    {"name": "event_ts", "type": "long", "doc": "epoch ms do evento"},
+    {"name": "id_ocorrencia", "type": "string", "doc": "chave natural do sinistro (degenerada em Fato_Sinistro)"},
+    {"name": "categoria", "type": {"type": "enum", "name": "CategoriaEvento",
+      "symbols": ["Colisao", "Pane", "Bateria_Critica", "Violacao", "Falha_Sensor", "Outro"]}},
+    {"name": "severidade", "type": "int", "doc": "1..5"},
+    {"name": "lat", "type": "double"},
+    {"name": "lon", "type": "double"},
+    {"name": "bateria", "type": "double"},
+    {"name": "id_sensor", "type": ["null", "string"], "default": null, "doc": "sensor que detectou (SCD2)"},
+    {"name": "detalhe", "type": "string"}
+  ]
+}

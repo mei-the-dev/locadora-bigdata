@@ -1,0 +1,25 @@
+# SO / ferramentas locais
+.DS_Store
+Thumbs.db
+.claude/
+
+# Material de estudo INTERNO (não faz parte da entrega — mantido só localmente)
+notas-apresentacao.md
+notas-apresentacao.html
+notas-apresentacao.pdf
+notas.css
+docs/guia-de-estudo.md
+docs/guia-de-estudo.html
+docs/guia-de-estudo.pdf
+
+# Material de terceiros — não redistribuir (direitos autorais)
+GRAD.2026-*
+referencias/papers/
+referencias/txt/
+referencias/livros/
+referencias/dois_clean.txt
+
+# Rascunhos e fontes antigas (substituídos pelas versões finais)
+*.docx
+*.pptx
+WhatsApp*

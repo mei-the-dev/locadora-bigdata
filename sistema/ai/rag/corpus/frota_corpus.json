@@ -1,0 +1,18 @@
+[
+  {"doc_id": "pol-cancel", "titulo": "Politica de Cancelamento", "fonte": "manual-frota",
+   "texto": "Reservas podem ser canceladas sem custo ate 24 horas antes da retirada. Apos esse prazo aplica-se taxa de 20 por cento sobre a diaria."},
+  {"doc_id": "tar-suv", "titulo": "Tarifa do Grupo SUV", "fonte": "tabela-tarifas",
+   "texto": "A diaria do grupo SUV custa R$ 189,90 mais R$ 1,20 por quilometro rodado. Horas extras custam R$ 35,00."},
+  {"doc_id": "tar-eco", "titulo": "Tarifa do Grupo Economico", "fonte": "tabela-tarifas",
+   "texto": "A diaria do grupo Economico custa R$ 89,90 mais R$ 1,20 por quilometro rodado."},
+  {"doc_id": "tar-exec", "titulo": "Tarifa do Grupo Executivo", "fonte": "tabela-tarifas",
+   "texto": "A diaria do grupo Executivo custa R$ 249,90 mais R$ 1,20 por quilometro rodado."},
+  {"doc_id": "emg-bat", "titulo": "Protocolo de Emergencia de Bateria", "fonte": "protocolo-emergencia",
+   "texto": "Em pane de bateria critica, o veiculo autonomo reduz a velocidade, encosta em local seguro, aciona o reboque e envia o dossie regulatorio a central de operacoes."},
+  {"doc_id": "emg-colisao", "titulo": "Protocolo de Colisao", "fonte": "protocolo-emergencia",
+   "texto": "Em colisao detectada por acelerometro e camera 360, o veiculo aciona alerta a central, preserva o log de sensores para o dossie e aguarda instrucao remota."},
+  {"doc_id": "faq-devolucao", "titulo": "FAQ Devolucao em Outro Patio", "fonte": "faq-clientes",
+   "texto": "O veiculo pode ser devolvido em qualquer um dos seis patios do consorcio. A cobranca de reposicionamento e calculada pela matriz de redistribuicao da frota."},
+  {"doc_id": "pol-conducao", "titulo": "Politica de Score de Conducao", "fonte": "manual-frota",
+   "texto": "A conducao economica (score acima de 75) recebe desconto de 5 por cento no acrescimo de consumo. A conducao agressiva (score abaixo de 50) tem sobretaxa de 15 por cento."}
+]

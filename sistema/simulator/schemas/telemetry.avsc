@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "TelemetriaAgregada",
+  "namespace": "frota.avro",
+  "doc": "Pacote de telemetria PRE-AGREGADO na borda (combiner). Serializado em Avro por eficiencia e evolucao de schema (Kreps 2011). Grao = janela de N leituras cruas de UM veiculo. vehicle_id e a chave de particao Kafka (ordem estrita R1).",
+  "fields": [
+    {"name": "vehicle_id", "type": "string", "doc": "chave de particao/clustering fim-a-fim"},
+    {"name": "empresa", "type": "string"},
+    {"name": "window_start_ts", "type": "long", "doc": "epoch ms - inicio da janela (event-time)"},
+    {"name": "window_end_ts", "type": "long", "doc": "epoch ms - fim da janela (event-time)"},
+    {"name": "n_leituras", "type": "int", "doc": "leituras cruas combinadas neste pacote"},
+    {"name": "velocidade_media", "type": "double"},
+    {"name": "velocidade_maxima", "type": "double"},
+    {"name": "bateria_min", "type": "double"},
+    {"name": "bateria_fim", "type": "double"},
+    {"name": "autonomia_fim_km", "type": "double"},
+    {"name": "temperatura_media", "type": "double"},
+    {"name": "lat_fim", "type": "double"},
+    {"name": "lon_fim", "type": "double"},
+    {"name": "km_percorridos", "type": "double"},
+    {"name": "eventos_bruscos", "type": "int", "doc": "frenagem/aceleracao/curva bruscas na janela"},
+    {"name": "patio_base", "type": "string", "doc": "patio de referencia atual do veiculo"}
+  ]
+}

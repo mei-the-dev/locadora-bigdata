@@ -1,0 +1,11 @@
+# Dashboard + camada de aplicacao (serving). Container tambem roda cobranca,
+# dossie, refresh_serving e concierge (RAG local, sem LLM paga).
+streamlit==1.38.0
+pandas==2.2.2
+matplotlib==3.9.2
+psycopg2-binary==2.9.9
+redis==5.0.8
+pymongo==4.8.0
+cassandra-driver==3.29.1
+scikit-learn==1.5.1
+

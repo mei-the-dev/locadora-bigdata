@@ -1,0 +1,802 @@
+<!--
+  Apresentação — Avaliação 03: Solução Big Data (MAE016 / UFRJ)
+  Arquitetura de Big Data para Frota Autônoma Conectada
+  Design acadêmico (Swiss/editorial claro). Zero dependência.
+  Agora com: VALOR PARA O CLIENTE, FUNDAMENTOS TEÓRICOS (citações) e REFERÊNCIAS.
+  EXPORTAR PDF: Chrome > Imprimir > PDF > Paisagem · Margens: Nenhuma · "Gráficos de plano de fundo".
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ height:100%; overflow-x:hidden; }
+
+:root{
+  --title:  clamp(2rem, 4.4vw, 3.5rem);
+  --h2:     clamp(1.3rem, 2.8vw, 2.25rem);
+  --h3:     clamp(1rem, 1.8vw, 1.42rem);
+  --body:   clamp(0.78rem, 1.15vw, 1rem);
+  --small:  clamp(0.66rem, 0.92vw, 0.82rem);
+  --tiny:   clamp(0.58rem, 0.78vw, 0.7rem);
+  --gap:    clamp(0.5rem, 1.5vh, 1.2rem);
+
+  --paper:#f5f3ec; --paper-2:#eeebe0; --card:#ffffff;
+  --ink:#1a1b1e; --ink-2:#3b3e46; --muted:#656974; --faint:#9a9ca4;
+  --rule:#e0ddd0; --rule-2:#cec9b8;
+  --accent:#26418f; --accent-s:#e9edf9;
+  --plum:#6d2f86; --plum-s:#f1e9f4;
+  --amber:#9a5a12; --amber-s:#f5ecd9;
+  --teal:#0f6f52; --teal-s:#e4f0ea;
+  --red:#a63142;
+  --font-serif:'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-sans:'Inter', system-ui, sans-serif;
+  --font-mono:'JetBrains Mono', ui-monospace, monospace;
+}
+@media screen{ html{ scroll-snap-type:y mandatory; scroll-behavior:smooth; } }
+body{ font-family:var(--font-sans); background:var(--paper); color:var(--ink); -webkit-font-smoothing:antialiased; line-height:1.5; }
+
+.slide{ width:100vw; height:100vh; height:100dvh; overflow:hidden; scroll-snap-align:start;
+  display:grid; grid-template-rows:auto 1fr auto; gap:clamp(0.4rem,1.3vh,1rem);
+  padding:clamp(1.2rem,2.8vw,2.6rem) clamp(1.5rem,3.8vw,3.8rem) clamp(0.9rem,1.8vw,1.6rem);
+  background:var(--paper); position:relative; border-top:5px solid var(--ink); }
+.slide.pa{ border-top-color:var(--accent); }
+.slide.pb{ border-top-color:var(--plum); }
+.slide.cover{ border-top-color:var(--ink); }
+.head{ display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap; min-height:0; }
+.body{ min-height:0; display:flex; flex-direction:column; justify-content:center; gap:var(--gap); overflow:hidden; }
+.foot{ display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--rule);
+  padding-top:clamp(0.3rem,0.8vh,0.55rem); font-family:var(--font-mono); font-size:var(--tiny); color:var(--faint); letter-spacing:0.06em; }
+.foot .t{ color:var(--muted); }
+
+.kicker{ display:flex; align-items:center; gap:0.6rem; font-family:var(--font-mono); font-size:var(--small);
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
+.kicker .sec{ color:var(--ink); font-weight:700; } .kicker .sep{ color:var(--rule-2); }
+.part{ font-family:var(--font-mono); font-size:var(--tiny); letter-spacing:0.12em; text-transform:uppercase;
+  padding:0.18em 0.6em; border-radius:3px; font-weight:700; }
+.part.a{ background:var(--accent-s); color:var(--accent); }
+.part.b{ background:var(--plum-s); color:var(--plum); }
+.part.br{ background:var(--amber-s); color:var(--amber); }
+
+h1{ font-family:var(--font-serif); font-weight:600; font-size:var(--title); line-height:1.05; letter-spacing:-0.01em; color:var(--ink); }
+h2{ font-family:var(--font-serif); font-weight:600; font-size:var(--h2); line-height:1.1; letter-spacing:-0.01em; color:var(--ink); }
+h3{ font-family:var(--font-serif); font-weight:600; font-size:var(--h3); color:var(--ink); line-height:1.15; }
+p,li{ font-size:var(--body); color:var(--ink-2); }
+strong{ color:var(--ink); font-weight:600; } em{ font-style:italic; color:var(--ink-2); }
+.lead{ font-size:calc(var(--body)*1.02); color:var(--ink-2); max-width:76ch; }
+.accent{ color:var(--accent); font-weight:600; }
+.mono{ font-family:var(--font-mono); font-size:0.92em; }
+.cite{ font-family:var(--font-mono); font-size:0.8em; color:var(--muted); white-space:nowrap; }
+.muted{ color:var(--muted); } .faint{ color:var(--faint); }
+.rule-h{ height:2px; width:52px; background:var(--accent); margin:0.1rem 0 0.2rem; }
+
+ul.bl{ list-style:none; display:flex; flex-direction:column; gap:clamp(0.28rem,0.9vh,0.65rem); }
+ul.bl li{ position:relative; padding-left:1.3em; line-height:1.4; }
+ul.bl li::before{ content:"—"; position:absolute; left:0; color:var(--accent); font-weight:600; }
+
+.grid{ display:grid; gap:clamp(0.5rem,1.2vw,0.95rem); }
+.g2{ grid-template-columns:repeat(2,1fr); } .g3{ grid-template-columns:repeat(3,1fr); } .g4{ grid-template-columns:repeat(4,1fr); }
+.card{ background:var(--card); border:1px solid var(--rule); border-radius:9px; padding:clamp(0.65rem,1.3vw,1.1rem);
+  position:relative; box-shadow:0 1px 2px rgba(26,27,30,0.04); }
+.card .tag{ font-family:var(--font-mono); font-size:var(--tiny); letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+.card h3{ margin:0.12em 0 0.22em; font-size:var(--h3); }
+.card p,.card li{ font-size:var(--small); line-height:1.4; }
+.card .neg{ color:var(--faint); font-size:var(--tiny); margin-top:0.35em; }
+.card.lb{ border-left:4px solid var(--accent); }
+.card.lb.blue{ border-left-color:var(--accent); } .card.lb.plum{ border-left-color:var(--plum); }
+.card.lb.amber{ border-left-color:var(--amber); } .card.lb.teal{ border-left-color:var(--teal); } .card.lb.red{ border-left-color:var(--red); }
+.kpi{ display:inline-block; font-family:var(--font-mono); font-size:var(--tiny); font-weight:700; letter-spacing:0.05em;
+  padding:0.12em 0.5em; border-radius:3px; background:var(--teal-s); color:var(--teal); margin-top:0.35rem; }
+.kpi.blue{ background:var(--accent-s); color:var(--accent); } .kpi.amber{ background:var(--amber-s); color:var(--amber); }
+.kpi.plum{ background:var(--plum-s); color:var(--plum); } .kpi.red{ background:#f6e4e6; color:var(--red); }
+
+.flow{ display:flex; align-items:stretch; gap:0.5rem; }
+.node{ flex:1; min-width:0; background:var(--card); border:1px solid var(--rule); border-radius:8px;
+  padding:clamp(0.45rem,0.95vw,0.85rem); display:flex; flex-direction:column; gap:0.18rem; box-shadow:0 1px 2px rgba(26,27,30,0.04); }
+.node .lab{ font-family:var(--font-mono); font-size:var(--tiny); letter-spacing:0.1em; text-transform:uppercase; color:var(--faint); }
+.node .ttl{ font-family:var(--font-serif); font-weight:600; font-size:clamp(0.82rem,1.35vw,1.08rem); color:var(--ink); line-height:1.12; }
+.node .sub{ font-size:var(--tiny); color:var(--muted); line-height:1.3; }
+.node.hl{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+.node.hlp{ border-color:var(--plum); box-shadow:0 0 0 1px var(--plum); }
+.node.hla{ border-color:var(--amber); box-shadow:0 0 0 1px var(--amber); }
+.arrow{ display:flex; align-items:center; color:var(--rule-2); font-size:1.2rem; font-weight:700; }
+
+table{ width:100%; border-collapse:collapse; font-size:var(--small); }
+th,td{ text-align:left; padding:clamp(0.35rem,0.8vw,0.6rem) clamp(0.45rem,0.9vw,0.8rem); border-bottom:1px solid var(--rule); vertical-align:top; }
+thead th{ background:var(--paper-2); font-family:var(--font-mono); font-size:var(--tiny); letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-2); }
+td{ color:var(--ink-2); } td strong{ color:var(--ink); }
+.win{ color:var(--teal); font-weight:600; } .lose{ color:var(--red); font-weight:600; }
+
+.callout{ border-left:3px solid var(--accent); background:var(--card); border:1px solid var(--rule); border-left-width:3px;
+  border-radius:0 8px 8px 0; padding:clamp(0.55rem,1.1vw,0.9rem) clamp(0.75rem,1.4vw,1.2rem); }
+.callout.amber{ border-left-color:var(--amber); } .callout.plum{ border-left-color:var(--plum); } .callout.teal{ border-left-color:var(--teal); }
+.callout .k{ font-family:var(--font-mono); font-size:var(--tiny); letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:0.2em; }
+.callout.amber .k{ color:var(--amber); } .callout.plum .k{ color:var(--plum); } .callout.teal .k{ color:var(--teal); }
+.callout p{ font-size:var(--body); color:var(--ink-2); }
+
+.pills{ display:flex; flex-wrap:wrap; gap:0.4rem; }
+.pill{ font-family:var(--font-mono); font-size:var(--tiny); letter-spacing:0.05em; padding:0.28em 0.65em;
+  border:1px solid var(--rule-2); border-radius:999px; color:var(--muted); background:var(--card); }
+
+.cover .body{ justify-content:center; gap:clamp(0.7rem,2vh,1.5rem); }
+.cover-course{ font-family:var(--font-mono); font-size:var(--small); letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); }
+.members{ border:1px solid var(--rule-2); background:var(--card); border-radius:10px; padding:clamp(0.7rem,1.4vw,1.1rem) clamp(0.9rem,1.6vw,1.4rem); max-width:560px; }
+.members .h{ font-family:var(--font-mono); font-size:var(--tiny); letter-spacing:0.13em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5em; }
+.members .row{ display:flex; justify-content:space-between; gap:1rem; padding:0.22em 0; border-bottom:1px dotted var(--rule); }
+.members .row:last-child{ border-bottom:none; }
+.members .nm{ color:var(--ink); font-weight:500; } .members .dre{ font-family:var(--font-mono); color:var(--muted); font-size:var(--small); }
+.cover-meta{ display:flex; flex-wrap:wrap; gap:0.4rem 1.5rem; font-family:var(--font-mono); font-size:var(--small); color:var(--muted); }
+
+.agenda{ display:grid; grid-template-columns:1fr 1fr; gap:0.3rem 2.2rem; }
+.agenda .it{ display:flex; gap:0.7rem; align-items:baseline; padding:0.26rem 0; border-bottom:1px solid var(--rule); }
+.agenda .it .n{ font-family:var(--font-mono); color:var(--accent); font-size:var(--small); min-width:1.7em; }
+.agenda .it .t{ color:var(--ink); font-size:var(--body); }
+.agenda .it .p{ margin-left:auto; font-family:var(--font-mono); font-size:var(--tiny); letter-spacing:0.08em; text-transform:uppercase; }
+.agenda .it .p.a{ color:var(--accent); } .agenda .it .p.b{ color:var(--plum); } .agenda .it .p.c{ color:var(--faint); }
+
+.steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(0.5rem,1.2vw,0.95rem); }
+.step{ background:var(--card); border:1px solid var(--rule); border-radius:9px; padding:clamp(0.6rem,1.2vw,1rem); position:relative; box-shadow:0 1px 2px rgba(26,27,30,0.04); }
+.step .num{ font-family:var(--font-mono); font-weight:700; font-size:clamp(1rem,1.7vw,1.4rem); color:var(--accent); line-height:1; }
+.step h3{ font-size:clamp(0.88rem,1.4vw,1.12rem); margin:0.18em 0; }
+.step p{ font-size:var(--small); line-height:1.38; }
+
+.refs{ columns:2; column-gap:2.2rem; }
+.refs p{ font-size:var(--tiny); color:var(--ink-2); line-height:1.32; margin-bottom:0.42em; break-inside:avoid; padding-left:1em; text-indent:-1em; }
+.refs .a{ color:var(--ink); font-weight:600; }
+
+.progress{ position:fixed; top:0; left:0; height:3px; background:var(--accent); z-index:100; transition:width .3s ease; width:0; }
+.nav-dots{ position:fixed; right:clamp(0.5rem,1.2vw,1.2rem); top:50%; transform:translateY(-50%); z-index:100; display:flex; flex-direction:column; gap:6px; }
+.nav-dots button{ width:8px; height:8px; border-radius:50%; border:1px solid var(--rule-2); background:transparent; cursor:pointer; padding:0; transition:.2s; }
+.nav-dots button.on{ background:var(--accent); border-color:var(--accent); transform:scale(1.4); }
+.hint{ position:fixed; bottom:8px; left:50%; transform:translateX(-50%); z-index:100; font-family:var(--font-mono); font-size:0.6rem; color:var(--faint); letter-spacing:0.1em; }
+
+.reveal{ opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s cubic-bezier(.16,1,.3,1); }
+.reveal.in{ opacity:1; transform:none; }
+.reveal.d1{ transition-delay:.05s } .reveal.d2{ transition-delay:.12s } .reveal.d3{ transition-delay:.19s }
+.reveal.d4{ transition-delay:.26s } .reveal.d5{ transition-delay:.33s } .reveal.d6{ transition-delay:.40s }
+
+@media screen and (max-width:820px){
+  .g4,.g3,.steps,.agenda,.refs{ grid-template-columns:1fr; columns:1; }
+  .g2{ grid-template-columns:1fr; } .flow{ flex-wrap:wrap; } .arrow{ transform:rotate(90deg); }
+}
+@media screen and (max-height:640px){ .nav-dots,.hint{ display:none; } }
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{ animation-duration:.01ms!important; transition-duration:.2s!important; } html{ scroll-behavior:auto; } .reveal{ opacity:1; transform:none; } }
+
+@media print{
+  @page{ size:1280px 720px; margin:0; }
+  html,body{ height:auto; overflow:visible; background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .progress,.nav-dots,.hint{ display:none!important; }
+  .slide{ width:1280px; height:720px; page-break-after:always; break-after:page; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .slide:last-child{ page-break-after:auto; }
+  .card,.node,.step,.callout{ box-shadow:none; }
+  .reveal{ opacity:1!important; transform:none!important; }
+}
+</style>
+
+<div class="progress" id="progress"></div>
+<nav class="nav-dots" id="dots" aria-label="Navegação de slides"></nav>
+<div class="hint">← → · espaço · roda</div>
+
+<main>
+
+<!-- 1 · CAPA -->
+<section class="slide cover" id="s1">
+  <div class="head"><div class="pills reveal">
+    <span class="pill">MAE016.15912 · Big Data</span><span class="pill">Avaliação 03</span><span class="pill">UFRJ · NCE</span>
+  </div></div>
+  <div class="body">
+    <div class="reveal d1">
+      <div class="cover-course">Proposta Executiva · Defesa Oral</div>
+      <h1 style="margin-top:0.3em">Arquitetura de <span class="accent">Big Data</span> para uma<br>Frota Autônoma Conectada</h1>
+      <p class="lead" style="margin-top:0.5em;max-width:54ch">Solução de dados resiliente, escalável e em tempo real que gera <strong>valor mensurável</strong> para o consórcio de locadoras — fundamentada na literatura de VLDB, Data Warehouse e Big Data.</p>
+    </div>
+    <div class="reveal d2 members">
+      <div class="h">Grupo · componentes (nome completo + DRE)</div>
+      <div class="row"><span class="nm">Izabela Lima da Silva</span><span class="dre">DRE 124156557</span></div>
+      <div class="row"><span class="nm">Caio Meirelles</span><span class="dre">DRE 122071557</span></div>
+    </div>
+    <div class="reveal d3 cover-meta">
+      <span>GRAD.2026-1 · MAE016.15912</span><span>Prof. Milton Ramos Ramirez</span><span>Rio de Janeiro · 2026.1</span>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>01 / 25</span></div>
+</section>
+
+<!-- 2 · ÍNDICE -->
+<section class="slide" id="s2">
+  <div class="head reveal"><div class="kicker"><span class="sec">00</span><span class="sep">/</span><span>Índice</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Estrutura da apresentação</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="agenda reveal d2">
+      <div class="it"><span class="n">01</span><span class="t">Contexto e problema do negócio</span><span class="p c">comum</span></div>
+      <div class="it"><span class="n">02</span><span class="t">Valor para o cliente</span><span class="p c">comum</span></div>
+      <div class="it"><span class="n">03</span><span class="t">Objetivos e requisitos</span><span class="p c">comum</span></div>
+      <div class="it"><span class="n">04</span><span class="t">Metodologia do trabalho</span><span class="p c">comum</span></div>
+      <div class="it"><span class="n">05</span><span class="t">Fundamentos teóricos</span><span class="p c">comum</span></div>
+      <div class="it"><span class="n">06</span><span class="t">Do DW ao Big Data (+ extensão)</span><span class="p c">comum</span></div>
+      <div class="it"><span class="n">07</span><span class="t">Arquitetura de referência</span><span class="p c">comum</span></div>
+      <div class="it"><span class="n">08</span><span class="t">Camada de borda (Edge)</span><span class="p a">Parte A</span></div>
+      <div class="it"><span class="n">09</span><span class="t">Ingestão — Kafka</span><span class="p a">Parte A</span></div>
+      <div class="it"><span class="n">10</span><span class="t">Conectividade e ordenação</span><span class="p a">Parte A</span></div>
+      <div class="it"><span class="n">11</span><span class="t">Lambda vs. Kappa</span><span class="p a">Parte A</span></div>
+      <div class="it"><span class="n">12</span><span class="t">Lakehouse — Delta Lake</span><span class="p a">Parte A</span></div>
+      <div class="it"><span class="n">13</span><span class="t">Processamento — Spark/Flink</span><span class="p a">Parte A</span></div>
+      <div class="it"><span class="n">14</span><span class="t">Persistência poliglota (NoSQL)</span><span class="p b">Parte B</span></div>
+      <div class="it"><span class="n">15</span><span class="t">Dashboard (Streamlit)</span><span class="p b">Parte B</span></div>
+      <div class="it"><span class="n">16</span><span class="t">Cobrança e emergências</span><span class="p b">Parte B</span></div>
+      <div class="it"><span class="n">17</span><span class="t">Concierge de IA por voz (PLN/RAG)</span><span class="p b">Parte B</span></div>
+      <div class="it"><span class="n">18</span><span class="t">Casos de uso reais + rastreabilidade</span><span class="p c">comum</span></div>
+      <div class="it"><span class="n">19</span><span class="t">Custos, alternativas, referências e conclusões</span><span class="p c">comum</span></div>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>02 / 25</span></div>
+</section>
+
+<!-- 3 · CONTEXTO -->
+<section class="slide" id="s3">
+  <div class="head reveal"><div class="kicker"><span class="sec">01</span><span class="sep">/</span><span>Contexto e problema</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Da locação manual à frota autônoma conectada</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">Um consórcio de seis locadoras automatiza a operação: pelo aplicativo, o cliente reserva o veículo e indica onde recebê-lo; o veículo <strong>sai sozinho do pátio, navega no trânsito e estaciona no ponto indicado</strong>; ao fim, retorna para higienização e manutenção. Cada veículo é um <strong>sensor sobre rodas</strong> que gera fluxo contínuo de dados.</p>
+    <div class="reveal d2 grid g3" style="margin-top:0.2rem">
+      <div class="card lb blue"><span class="tag">Fonte de dados</span><h3>Veículo instrumentado</h3><p>Sensores internos (motor, chassi) e externos (telemetria inercial, câmeras 360°, impacto) + computador de bordo (Edge).</p></div>
+      <div class="card lb"><span class="tag">Escala</span><h3>Frota simultânea</h3><p>Milhares de veículos transmitindo ao mesmo tempo, sob banda móvel cara e finita.</p></div>
+      <div class="card lb plum"><span class="tag">Ambição</span><h3>Autonomia e IA</h3><p>Reserva sem balcão, cobrança dinâmica pós-uso, resposta a sinistros e concierge por voz.</p></div>
+    </div>
+    <div class="reveal d3 callout"><span class="k">Problema central</span><p>O Data Warehouse sozinho não sustenta o novo modelo: é preciso uma solução de <strong>Big Data</strong> com ingestão massiva, processamento em tempo real e persistência poliglota.</p></div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>03 / 25</span></div>
+</section>
+
+<!-- 4 · VALOR PARA O CLIENTE (NOVO) -->
+<section class="slide" id="s4">
+  <div class="head reveal"><div class="kicker"><span class="sec">02</span><span class="sep">/</span><span>Valor para o cliente</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">O que o consórcio ganha com a solução</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2 grid g3" style="margin-top:0.1rem">
+      <div class="card lb teal"><span class="tag">Utilização da frota</span><h3>Menos veículos ociosos</h3><p>Redistribuição inteligente (Markov + rotas em tempo real) antecipa a demanda por pátio e maximiza o giro dos ativos.</p><span class="kpi">↑ taxa de utilização</span></div>
+      <div class="card lb blue"><span class="tag">Receita</span><h3>Cobrança justa e dinâmica</h3><p>Acréscimos por km, consumo e infrações — receita que hoje se perde — com transparência que reduz contestações.</p><span class="kpi blue">↑ receita / locação</span></div>
+      <div class="card lb"><span class="tag">Custo operacional</span><h3>Sem balcão, sem logística de entrega</h3><p>Reserva pelo app e veículo autônomo cortam o custo de atendimento e de deslocar equipes para entregar/buscar.</p><span class="kpi">↓ custo por locação</span></div>
+      <div class="card lb amber"><span class="tag">Sinistros</span><h3>Resposta e regulação mais rápidas</h3><p>Detecção na borda + dossiê automático aceleram o socorro e o processo com seguradora/órgãos.</p><span class="kpi amber">↓ tempo de resposta</span></div>
+      <div class="card lb red"><span class="tag">Disponibilidade</span><h3>Manutenção preditiva</h3><p>Antecipar panes a partir da telemetria reduz o veículo parado e a quebra em operação.</p><span class="kpi red">↓ downtime</span></div>
+      <div class="card lb plum"><span class="tag">Experiência</span><h3>Concierge por IA</h3><p>Roteiro personalizado por voz diferencia o serviço e fideliza o cliente premium.</p><span class="kpi plum">↑ satisfação / NPS</span></div>
+    </div>
+    <div class="reveal d3 callout teal"><span class="k">Fio condutor</span><p>Cada decisão técnica a seguir existe para mover um destes <strong>indicadores de negócio</strong> — a arquitetura é meio, o valor é o fim.</p></div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>04 / 25</span></div>
+</section>
+
+<!-- 5 · OBJETIVOS E REQUISITOS -->
+<section class="slide" id="s5">
+  <div class="head reveal"><div class="kicker"><span class="sec">03</span><span class="sep">/</span><span>Objetivos e requisitos</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">O que a solução precisa entregar</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="grid g2" style="margin-top:0.1rem">
+      <div class="reveal d2 card lb blue"><span class="tag">Requisitos funcionais</span>
+        <ul class="bl" style="margin-top:0.4rem">
+          <li><strong>Acompanhamento</strong> (dashboard): frota, emergências e financeiro</li>
+          <li><strong>Reserva</strong> mais objetiva, simples e eficiente</li>
+          <li><strong>Cobrança automática</strong> pós-devolução, com ajustes por uso</li>
+          <li><strong>Apoio a emergências</strong> e dossiê para regulação</li>
+          <li><em>Extra:</em> <strong>concierge de viagem por IA</strong> (voz)</li>
+        </ul>
+      </div>
+      <div class="reveal d3 card lb amber"><span class="tag">Requisitos não funcionais (5 desafios)</span>
+        <ul class="bl" style="margin-top:0.4rem">
+          <li><strong>Banda finita</strong> — inviável trafegar vídeo bruto contínuo</li>
+          <li><strong>Alta concorrência</strong> — sem perda de pacotes nem gargalo</li>
+          <li><strong>Ordenação estrita</strong> por veículo e <span class="mono">timestamp</span></li>
+          <li><strong>Resiliência</strong> — tolerância a falhas e reprocessamento</li>
+          <li><strong>Consistência ACID</strong> entre lote e streaming</li>
+        </ul>
+      </div>
+    </div>
+    <p class="reveal d4 faint" style="font-size:var(--small)">Estes requisitos não funcionais orientam todas as decisões de arquitetura apresentadas a seguir.</p>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>05 / 25</span></div>
+</section>
+
+<!-- 6 · METODOLOGIA -->
+<section class="slide" id="s6">
+  <div class="head reveal"><div class="kicker"><span class="sec">04</span><span class="sep">/</span><span>Metodologia do trabalho</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Como a proposta foi construída</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2 steps">
+      <div class="step"><span class="num">1</span><h3>Levantamento de requisitos</h3><p>Requisitos funcionais e não funcionais extraídos do contexto e do enunciado.</p></div>
+      <div class="step"><span class="num">2</span><h3>Revisão bibliográfica</h3><p>Leitura de <strong>21 referências primárias</strong> (papers seminais) mapeadas às 4 partes da ementa.</p></div>
+      <div class="step"><span class="num">3</span><h3>Decisão fundamentada</h3><p>Cada escolha por <em>trade-offs</em> explícitos, ancorada na literatura.</p></div>
+      <div class="step"><span class="num">4</span><h3>Seleção de componentes</h3><p>Tecnologia escolhida pelo padrão de acesso (persistência poliglota).</p></div>
+      <div class="step"><span class="num">5</span><h3>Prova de conceito</h3><p>Sistema executável (docker-compose) validado; DDL do DW estendido testado.</p></div>
+      <div class="step"><span class="num">6</span><h3>Continuidade com o DW</h3><p>Extensão do modelo dimensional da Avaliação 02 — sem retrabalho.</p></div>
+    </div>
+    <p class="reveal d3 faint" style="font-size:var(--small)">Critério de decisão em cada camada: adequação ao SLA · custo · resiliência · complexidade — sempre com lastro teórico citado.</p>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>06 / 25</span></div>
+</section>
+
+<!-- 7 · FUNDAMENTOS TEÓRICOS (NOVO) -->
+<section class="slide" id="s7">
+  <div class="head reveal"><div class="kicker"><span class="sec">05</span><span class="sep">/</span><span>Fundamentos teóricos</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Ombros de gigantes: as bases do projeto</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">Cada camada é ancorada na literatura fundadora de VLDB, DW e Big Data — organizada nas quatro partes da ementa.</p>
+    <div class="reveal d2">
+      <table>
+        <thead><tr><th>Parte</th><th>Princípio fundador</th><th>Referência</th><th>Onde aplicamos</th></tr></thead>
+        <tbody>
+          <tr><td><strong>I</strong> · Distribuído / VLDB</td><td>Falha é a norma; mover a computação para perto do dado (localidade)</td><td class="cite">Ghemawat 2003; Dean & Ghemawat 2004</td><td>Réplicas, Edge, escalonamento do Spark</td></tr>
+          <tr><td><strong>I</strong> · Tempo distribuído</td><td>Ordem e consistência externa (TrueTime)</td><td class="cite">Corbett 2012</td><td>Ordenação estrita por veículo+timestamp</td></tr>
+          <tr><td><strong>II</strong> · DW / OLAP / Lakehouse</td><td>OLAP separado do OLTP; operador CUBE; Lakehouse unifica</td><td class="cite">Chaudhuri & Dayal 1997; Gray 1997; Armbrust 2021</td><td>DW vira camada Gold; cubo executivo</td></tr>
+          <tr><td><strong>III</strong> · Streaming</td><td>Log particionado; watermarks; exactly-once</td><td class="cite">Kreps 2011; Carbone 2015; Zaharia 2013</td><td>Kafka, Flink, Spark Streaming</td></tr>
+          <tr><td><strong>III</strong> · Engenharia de IA</td><td>Geração ancorada em conhecimento recuperável (RAG)</td><td class="cite">Lewis 2020; Guo 2022</td><td>Concierge e dossiês citáveis</td></tr>
+          <tr><td><strong>IV</strong> · NoSQL / CAP</td><td>CAP; BASE vs ACID; wide-column LSM</td><td class="cite">Gilbert & Lynch 2002; DeCandia 2007; Lakshman 2009</td><td>Persistência poliglota</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>07 / 25</span></div>
+</section>
+
+<!-- 8 · DW RECAP + EXTENSÃO -->
+<section class="slide" id="s8">
+  <div class="head reveal"><div class="kicker"><span class="sec">06</span><span class="sep">/</span><span>Continuidade com a Avaliação 02 (DW)</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Do Data Warehouse ao Big Data — e a extensão do modelo</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="grid g2" style="margin-top:0.1rem">
+      <div class="reveal d2 card lb teal"><span class="tag">Avaliação 02 · OLTP → OLAP <span class="cite">[Chaudhuri & Dayal 1997]</span></span><h3>Esquema estrela (PostgreSQL)</h3>
+        <ul class="bl" style="margin-top:0.3rem">
+          <li>Fatos: <strong>Reserva, Locação, Movimentação</strong> (fact constellation)</li>
+          <li>5 dimensões conformadas; Pátio <em>role-playing</em></li>
+          <li>4 fontes OLTP → ELT; previsão de pátios via <strong>Markov</strong></li>
+        </ul>
+      </div>
+      <div class="reveal d3 card lb blue"><span class="tag">Avaliação 03 · o DW vira a camada Gold</span><h3>Extensão dimensional</h3>
+        <ul class="bl" style="margin-top:0.3rem">
+          <li>Novos fatos: <strong>Telemetria, Cobrança, Sinistro, Manutenção</strong></li>
+          <li>Novas dims: Tempo_Detalhe (min), Sensor (SCD2), TipoEvento, FaixaCondução</li>
+          <li>Carregados por <strong>ELT do Silver</strong> (Flink/Spark) no Lakehouse</li>
+        </ul>
+      </div>
+    </div>
+    <div class="reveal d4 callout teal"><span class="k">Estratégia — Lakehouse <span class="cite">[Armbrust 2021]</span></span><p>Não substituir, e sim <strong>envolver</strong> o DW: o esquema estrela passa a ser a camada <strong>Gold</strong> sobre Delta/MinIO, alimentada pelo pipeline de streaming — evita a dicotomia lake vs. warehouse.</p></div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>08 / 25</span></div>
+</section>
+
+<!-- 9 · ARQUITETURA DE REFERÊNCIA -->
+<section class="slide" id="s9">
+  <div class="head reveal"><div class="kicker"><span class="sec">07</span><span class="sep">/</span><span>Arquitetura de referência</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Pipeline fim a fim: ingestão → processamento → armazenamento → visualização</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2 flow">
+      <div class="node hl"><span class="lab">1 · Borda</span><span class="ttl">Edge Computing</span><span class="sub">Pré-processa e agrega; 2 fluxos.</span></div>
+      <div class="arrow">›</div>
+      <div class="node"><span class="lab">2 · Ingestão</span><span class="ttl">Kafka</span><span class="sub">Tópicos isolados; ordem por veículo.</span></div>
+      <div class="arrow">›</div>
+      <div class="node"><span class="lab">3 · Processamento</span><span class="ttl">Spark · Flink</span><span class="sub">Emergências e análise contínua.</span></div>
+    </div>
+    <div class="reveal d3 flow">
+      <div class="node"><span class="lab">4 · Lakehouse</span><span class="ttl">Delta Lake</span><span class="sub">Bronze/Silver/Gold · ACID.</span></div>
+      <div class="arrow">›</div>
+      <div class="node"><span class="lab">5 · Persistência</span><span class="ttl">NoSQL poliglota</span><span class="sub">Cassandra · MongoDB · Redis.</span></div>
+      <div class="arrow">›</div>
+      <div class="node"><span class="lab">6 · Serving</span><span class="ttl">Dashboard · IA</span><span class="sub">Streamlit · cobrança · concierge.</span></div>
+    </div>
+    <div class="reveal d4 grid g3">
+      <div class="card lb amber" style="padding:0.5rem 0.85rem"><span class="tag">Hot path</span><p style="margin-top:0.1rem">Colisão → alerta imediato → emergência.</p></div>
+      <div class="card lb blue" style="padding:0.5rem 0.85rem"><span class="tag">Warm path</span><p style="margin-top:0.1rem">Telemetria 1s → análise e roteirização.</p></div>
+      <div class="card lb teal" style="padding:0.5rem 0.85rem"><span class="tag">Cold path</span><p style="margin-top:0.1rem">Histórico → relatórios e manutenção.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>09 / 25</span></div>
+</section>
+
+<!-- 10 · BORDA (A) -->
+<section class="slide pa" id="s10">
+  <div class="head reveal"><span class="part a">Parte A</span><div class="kicker"><span class="sec">08</span><span class="sep">/</span><span>Camada de borda · Edge Computing</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Filtrar na borda: só o relevante trafega pela rede</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">Fundamento: <strong>localidade</strong> — mover a computação para perto do dado poupa a banda escassa; a pré-agregação no veículo é o <em>combiner</em> do MapReduce aplicado à borda. <span class="cite">[Dean & Ghemawat 2004]</span></p>
+    <div class="grid g2" style="margin-top:0.1rem">
+      <div class="reveal d2 card lb blue"><span class="tag">Fluxo de rotina · warm path</span><h3>Telemetria agregada</h3>
+        <ul class="bl" style="margin-top:0.3rem">
+          <li>Velocidade, GPS, bateria, combustível, sensores</li>
+          <li>Agregada e enviada a cada <strong>1 s (ou mais)</strong></li>
+          <li>Binário compacto: <span class="mono">Avro sobre MQTT</span></li>
+        </ul>
+      </div>
+      <div class="reveal d3 card lb amber"><span class="tag">Fluxo crítico · hot path</span><h3>Alerta imediato de sinistro</h3>
+        <ul class="bl" style="margin-top:0.3rem">
+          <li>Detecção de colisão <strong>na borda</strong> (reação sub-segundo)</li>
+          <li>Prioriza a rede e envia <em>payload</em> de emergência</li>
+          <li><em>Ring buffer</em>: ~30 s de dados brutos + metadados</li>
+        </ul>
+      </div>
+    </div>
+    <div class="reveal d4 callout"><span class="k">Valor</span><p>Corta o <strong>maior custo recorrente</strong> (banda/egress) e viabiliza a resposta que não pode esperar a nuvem. O vídeo bruto permanece no veículo.</p></div>
+  </div>
+  <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>10 / 25</span></div>
+</section>
+
+<!-- 11 · KAFKA (A) -->
+<section class="slide pa" id="s11">
+  <div class="head reveal"><span class="part a">Parte A</span><div class="kicker"><span class="sec">09</span><span class="sep">/</span><span>Ingestão · barramento de eventos</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Apache Kafka como log distribuído particionado</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">Log particionado com consumo <em>pull</em> por offset e retenção temporal — buffer durável sob banda finita, com <strong>ordem estrita dentro da partição</strong>. <span class="cite">[Kreps 2011]</span></p>
+    <div class="grid g2" style="margin-top:0.1rem">
+      <div class="reveal d2 card lb blue"><span class="tag">Tópicos isolados</span><h3>Separar telemetria de alarmes</h3>
+        <div class="pills" style="margin-top:0.4rem">
+          <span class="pill">telemetry.raw</span><span class="pill" style="color:var(--amber)">alerts.critical</span>
+          <span class="pill">trips.events</span><span class="pill">billing.events</span>
+        </div>
+        <p style="margin-top:0.5rem">O alarme crítico <strong>nunca fica preso</strong> atrás da fila de telemetria.</p>
+      </div>
+      <div class="reveal d3 card lb teal"><span class="tag">Garantias</span><h3>Ordem e resiliência</h3>
+        <ul class="bl" style="margin-top:0.3rem">
+          <li>Partição por <span class="mono">vehicle_id</span> → ordem por veículo, sem coordenação global</li>
+          <li>Replicação + ISR → tolerância a falhas <span class="cite">[Ghemawat 2003]</span></li>
+          <li>At-least-once + dedup por chave (aplicação)</li>
+          <li>Avro + Schema Registry → contrato borda↔consumidor</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>11 / 25</span></div>
+</section>
+
+<!-- 12 · CONECTIVIDADE E ORDENAÇÃO (A) -->
+<section class="slide pa" id="s12">
+  <div class="head reveal"><span class="part a">Parte A</span><div class="kicker"><span class="sec">10</span><span class="sep">/</span><span>Conectividade e ordenação estrita</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Rede oscilante e mensagens fora de ordem</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">Zonas de sombra (túneis, subsolos) entregam dados atrasados e fora de ordem. Solução em três camadas — o rigor de ordem que o Spanner obtém com TrueTime, o Flink emula com <em>watermarks</em>. <span class="cite">[Corbett 2012; Carbone 2015]</span></p>
+    <div class="grid g3" style="margin-top:0.1rem">
+      <div class="reveal d2 card lb blue"><span class="tag">Borda</span><h3>Compressão + buffer</h3><p>Avro reduz o volume; <em>store-and-forward</em> guarda na desconexão e reenvia sem perda.</p></div>
+      <div class="reveal d3 card"><span class="tag">Kafka</span><h3>Ordenação por chave</h3><p>Partição por <span class="mono">vehicle_id</span> mantém a ordem por veículo mesmo com produtores concorrentes.</p></div>
+      <div class="reveal d4 card lb teal"><span class="tag">Flink</span><h3>Event-time + watermarks</h3><p>Processa pelo <span class="mono">timestamp</span> do veículo; <em>watermarks</em> reordenam pacotes atrasados. <span class="cite">[Fragkoulis 2020]</span></p></div>
+    </div>
+    <div class="reveal d5 callout teal"><span class="k">Resultado</span><p>Ordenação estrita por veículo e <span class="mono">timestamp</span> — mesmo sob estresse de carga e conectividade intermitente.</p></div>
+  </div>
+  <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>12 / 25</span></div>
+</section>
+
+<!-- 13 · LAMBDA vs KAPPA (A) -->
+<section class="slide pa" id="s13">
+  <div class="head reveal"><span class="part a">Parte A</span><div class="kicker"><span class="sec">11</span><span class="sep">/</span><span>Comparação crítica de arquiteturas</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Lambda vs. Kappa — e a decisão</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2">
+      <table>
+        <thead><tr><th>Critério</th><th>Lambda</th><th>Kappa</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ideia</strong></td><td>Camada batch (exata) + camada de velocidade + serving</td><td>Tudo é stream; reprocessa reproduzindo o log</td></tr>
+          <tr><td><strong>Base de código</strong></td><td class="lose">Dupla (mesma lógica em dois sistemas)</td><td class="win">Única</td></tr>
+          <tr><td><strong>Consistência</strong></td><td class="lose">Risco de divergência entre camadas</td><td class="win">Uma verdade, uma lógica</td></tr>
+          <tr><td><strong>Manutenção</strong></td><td class="lose">Alta</td><td class="win">Menor</td></tr>
+          <tr><td><strong>Reprocessar histórico</strong></td><td class="win">Camada batch nativa</td><td>Exige replay + Lakehouse para lote pesado</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="reveal d3 callout"><span class="k">Decisão</span><p>O stream durável do Kafka unifica os caminhos e <strong>elimina a dupla implementação</strong> — adotamos <strong>Kappa</strong>, cobrindo o lote pesado com o Lakehouse. <span class="cite">[Fragkoulis 2020; Carbone 2015]</span></p></div>
+  </div>
+  <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>13 / 25</span></div>
+</section>
+
+<!-- 14 · DELTA LAKE (A) -->
+<section class="slide pa" id="s14">
+  <div class="head reveal"><span class="part a">Parte A</span><div class="kicker"><span class="sec">12</span><span class="sep">/</span><span>Lakehouse · Delta Lake</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Kappa realizado por Lakehouse com Delta Lake</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">O object store é <em>key-value</em> sem atomicidade cross-key; o <strong>log de transações do Delta</strong> traz ACID serializável, <em>data skipping</em> e <em>time travel</em> ao data lake. <span class="cite">[Armbrust 2020, 2021]</span></p>
+    <div class="reveal d2 flow" style="margin-top:0.1rem">
+      <div class="node hla"><span class="lab">Bronze</span><span class="ttl">Bruto</span><span class="sub">Ingerido do Kafka; append-only, auditável.</span></div>
+      <div class="arrow">›</div>
+      <div class="node hl"><span class="lab">Silver</span><span class="ttl">Limpo e conformado</span><span class="sub">Deduplicado, validado, tipado.</span></div>
+      <div class="arrow">›</div>
+      <div class="node" style="border-color:var(--teal);box-shadow:0 0 0 1px var(--teal)"><span class="lab">Gold</span><span class="ttl">Marts de negócio</span><span class="sub">O DW estrela estendido (BI).</span></div>
+    </div>
+    <div class="reveal d3 grid g3">
+      <div class="card lb plum" style="padding:0.5rem 0.85rem"><span class="tag">ACID</span><p style="margin-top:0.1rem">Batch e streaming leem a mesma verdade.</p></div>
+      <div class="card lb blue" style="padding:0.5rem 0.85rem"><span class="tag">Time travel</span><p style="margin-top:0.1rem">Auditar versões e montar dossiês reproduzíveis.</p></div>
+      <div class="card lb teal" style="padding:0.5rem 0.85rem"><span class="tag">Motor</span><p style="margin-top:0.1rem">Spark SQL + Catalyst <span class="cite">[Armbrust 2015]</span>.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>14 / 25</span></div>
+</section>
+
+<!-- 15 · PROCESSAMENTO (A) -->
+<section class="slide pa" id="s15">
+  <div class="head reveal"><span class="part a">Parte A</span><div class="kicker"><span class="sec">13</span><span class="sep">/</span><span>Camada de processamento</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Três regimes para três SLAs distintos</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="grid g3" style="margin-top:0.1rem">
+      <div class="reveal d2 card lb teal"><span class="tag">Batch / cold path · horas</span><h3>Apache Spark</h3>
+        <p style="margin-top:0.15rem">RDD com tolerância por <strong>linhagem</strong>; reuso em memória até 20×. <span class="cite">[Zaharia 2012]</span></p>
+        <ul class="bl" style="margin-top:0.25rem"><li>Consolida do Delta Bronze</li><li>Manutenção preditiva; matriz de Markov</li><li>Generaliza o <strong>MapReduce</strong> <span class="cite">[Dean 2004]</span></li></ul>
+      </div>
+      <div class="reveal d3 card lb amber"><span class="tag">Stream · segundos</span><h3>Spark Streaming</h3>
+        <p style="margin-top:0.15rem">Micro-batches (D-Streams) com <strong>exactly-once</strong> e saída idempotente. <span class="cite">[Zaharia 2013]</span></p>
+        <ul class="bl" style="margin-top:0.25rem"><li>Hot path das emergências</li><li>Orquestra a resposta na nuvem</li></ul>
+      </div>
+      <div class="reveal d4 card lb blue"><span class="tag">Stream · milissegundos</span><h3>Apache Flink</h3>
+        <p style="margin-top:0.15rem">Dataflow único; <em>ABS</em> (Chandy-Lamport) sem parar a execução. <span class="cite">[Carbone 2015]</span></p>
+        <ul class="bl" style="margin-top:0.25rem"><li>Janelas + event-time + watermarks</li><li>Rotas, congestão, score de condução</li></ul>
+      </div>
+    </div>
+    <div class="reveal d5 callout"><span class="k">Por que separar</span><p>Vazão histórica (Spark batch) ≠ orquestração da emergência (Spark Streaming) ≠ latência mínima com estado (Flink). A reação sub-segundo à colisão é na borda; a nuvem orquestra a resposta.</p></div>
+  </div>
+  <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>15 / 25</span></div>
+</section>
+
+<!-- 16 · PERSISTÊNCIA (B) -->
+<section class="slide pb" id="s16">
+  <div class="head reveal"><span class="part b">Parte B</span><div class="kicker"><span class="sec">14</span><span class="sep">/</span><span>Persistência poliglota (NoSQL)</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Cada dado no banco certo para seu padrão de acesso</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">Raiz teórica: o <strong>teorema CAP</strong> — sob partição, consistência e disponibilidade não coexistem; segmenta-se o sistema e atribui-se a cada subserviço seu trade-off. <span class="cite">[Gilbert & Lynch 2002; Cattell 2011]</span></p>
+    <div class="reveal d2 grid g4" style="margin-top:0.1rem">
+      <div class="card lb teal"><span class="tag">Wide-column · AP</span><h3>Cassandra</h3><p><strong>Telemetria.</strong> Escrita massiva (LSM), <em>clustering</em> por timestamp materializa a ordem. <span class="cite">[Lakshman 2009; DeCandia 2007]</span></p></div>
+      <div class="card lb blue"><span class="tag">Documento</span><h3>MongoDB</h3><p><strong>Cadastrais e dossiês.</strong> Esquema flexível para sensores heterogêneos e relatórios.</p></div>
+      <div class="card lb red"><span class="tag">Key-value · RAM</span><h3>Redis</h3><p><strong>Cache quente.</strong> Estado ao vivo, cache de rotas, geoespacial (sub-ms).</p></div>
+      <div class="card lb amber"><span class="tag">Relacional · CP</span><h3>PostgreSQL / Delta</h3><p><strong>Fonte da verdade.</strong> Cobrança (ACID), DW/Gold, treino de ML.</p></div>
+    </div>
+    <div class="reveal d3 callout"><span class="k">Mapeamento CAP</span><p>Telemetria (AP, <em>always-writeable</em>) vs. cobrança/dossiê (CP, consistência forte) — o mesmo trade-off do carrinho vs. checkout do Dynamo.</p></div>
+  </div>
+  <div class="foot"><span class="t">Parte B · Armazenamento, interface e IA</span><span>16 / 25</span></div>
+</section>
+
+<!-- 17 · DASHBOARD (B) -->
+<section class="slide pb" id="s17">
+  <div class="head reveal"><span class="part b">Parte B</span><div class="kicker"><span class="sec">15</span><span class="sep">/</span><span>Camada de serving · dashboard</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Painel de monitoramento em Streamlit</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">OLAP sobre a <strong>Gold</strong> (nunca sobre os OLTP <span class="cite">[Chaudhuri & Dayal 1997]</span>); ao vivo via <strong>Redis</strong> pub/sub. O cubo frota × tempo × pátio × empresa apoia a visão executiva <span class="cite">[Gray 1997]</span>.</p>
+    <div class="reveal d2 grid g4" style="margin-top:0.1rem">
+      <div class="card lb blue" style="padding:0.55rem 0.85rem"><span class="tag">Frota</span><p style="margin-top:0.1rem">Mapa ao vivo, veículos ativos, bateria média, alertas mecânicos.</p></div>
+      <div class="card" style="padding:0.55rem 0.85rem"><span class="tag">Reservas & locações</span><p style="margin-top:0.1rem">Funil de reservas e locações em andamento.</p></div>
+      <div class="card lb teal" style="padding:0.55rem 0.85rem"><span class="tag">Financeiro</span><p style="margin-top:0.1rem">Cobranças, receita e ajustes por locação.</p></div>
+      <div class="card lb amber" style="padding:0.55rem 0.85rem"><span class="tag">Emergências</span><p style="margin-top:0.1rem">Triagem que pisca em vermelho no payload crítico.</p></div>
+      <div class="card lb plum" style="padding:0.55rem 0.85rem"><span class="tag">Viagens</span><p style="margin-top:0.1rem">Trajetos em curso, ETA, congestionamentos.</p></div>
+      <div class="card lb red" style="padding:0.55rem 0.85rem"><span class="tag">Oficina</span><p style="margin-top:0.1rem">Manutenção preditiva e fila de higienização.</p></div>
+      <div class="card" style="padding:0.55rem 0.85rem"><span class="tag">Ao vivo</span><p style="margin-top:0.1rem">Quase tempo real via Redis + auto-refresh.</p></div>
+      <div class="card" style="padding:0.55rem 0.85rem"><span class="tag">Histórico</span><p style="margin-top:0.1rem">KPIs e tendências das marts Gold.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Parte B · Armazenamento, interface e IA</span><span>17 / 25</span></div>
+</section>
+
+<!-- 18 · COBRANÇA & EMERGÊNCIAS (B / ponte) -->
+<section class="slide pb" id="s18">
+  <div class="head reveal"><span class="part b">Parte B</span><span class="part br">Ponte A↔B</span><div class="kicker"><span class="sec">16</span><span class="sep">/</span><span>Cobrança dinâmica e emergências</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Cobrança automática e apoio a sinistros</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="grid g2" style="margin-top:0.1rem">
+      <div class="reveal d2 card lb teal"><span class="tag">Cobrança dinâmica · valor ao cliente</span><h3>Acionada na devolução</h3>
+        <p style="margin-top:0.15rem">Valor final = base ± ajustes por km, tempo, consumo, infrações e score de condução (Flink).</p>
+        <p class="neg"><em>Exactly-once</em> idempotente evita cobrar em dobro <span class="cite">[Zaharia 2013]</span>; auditável por time travel.</p>
+        <span class="kpi">↑ receita · ↓ contestações</span>
+      </div>
+      <div class="reveal d3 card lb amber"><span class="tag">Emergências · hot path</span><h3>De colisão a dossiê de regulação</h3>
+        <p style="margin-top:0.15rem"><span class="mono">borda → alerts.critical → Spark → resposta</span></p>
+        <ul class="bl" style="margin-top:0.25rem"><li>Ação imediata: guincho, seguradora, substituto</li><li>Dossiê citável (sensores + vídeo + timeline)</li></ul>
+        <span class="kpi amber">↓ tempo de resposta e de regulação</span>
+      </div>
+    </div>
+    <p class="reveal d4 faint" style="font-size:var(--small)">Ponte entre as partes: a detecção (Parte A) alimenta a resposta e a triagem no dashboard (Parte B).</p>
+  </div>
+  <div class="foot"><span class="t">Parte B · Armazenamento, interface e IA</span><span>18 / 25</span></div>
+</section>
+
+<!-- 19 · CONCIERGE IA (B) -->
+<section class="slide pb" id="s19">
+  <div class="head reveal"><span class="part b">Parte B</span><div class="kicker"><span class="sec">17</span><span class="sep">/</span><span>Extra · concierge de viagem por IA</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Concierge por voz: PLN + RAG (sem LLM paga)</h2>
+    <div class="rule-h reveal d1"></div>
+    <p class="reveal d1 lead">O <strong>RAG</strong> ancora a geração em conhecimento recuperável (índice denso), reduz alucinação e dá <strong>proveniência</strong> auditável — a mesma base dos dossiês de emergência. <span class="cite">[Lewis 2020]</span></p>
+    <div class="reveal d2 flow" style="margin-top:0.1rem">
+      <div class="node"><span class="lab">Voz</span><span class="ttl">ASR</span><span class="sub">Fala → texto.</span></div>
+      <div class="arrow">›</div>
+      <div class="node hlp"><span class="lab">Cérebro</span><span class="ttl">PLN + agente</span><span class="sub">Intenção/entidades + function calling.</span></div>
+      <div class="arrow">›</div>
+      <div class="node"><span class="lab">Memória</span><span class="ttl">Banco vetorial (RAG)</span><span class="sub">POIs por similaridade <span class="cite">[Guo 2022]</span>.</span></div>
+      <div class="arrow">›</div>
+      <div class="node"><span class="lab">Saída</span><span class="ttl">TTS + GPS</span><span class="sub">Roteiro e waypoints.</span></div>
+    </div>
+    <div class="reveal d3 callout plum"><span class="k">Exemplo — "após a reunião…"</span><p>Almoço típico bem avaliado + estacionamento fácil + exposição de arte nos gostos do cliente → o agente consulta localização, POIs (vetorial) e agenda, monta o roteiro e <strong>injeta os waypoints no GPS</strong>. Privacidade: consentimento, PII, <em>wake-word</em> on-device.</p></div>
+  </div>
+  <div class="foot"><span class="t">Parte B · Armazenamento, interface e IA</span><span>19 / 25</span></div>
+</section>
+
+<!-- 20 · CASOS DE USO REAIS (NOVO) -->
+<section class="slide" id="s-casos">
+  <div class="head reveal"><div class="kicker"><span class="sec">19</span><span class="sep">/</span><span>Casos de uso reais</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Três cenários: onde a modelagem cria valor</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2 grid g3" style="margin-top:0.1rem">
+      <div class="card lb amber"><span class="tag">Crítico · resposta rápida</span><h3>Colisão em túnel</h3><p>Detecção na borda (sub-segundo) → <span class="mono">alerts.critical</span> → Spark orquestra guincho, seguradora e substituto; o Flink reordena a telemetria que só sai do túnel depois.</p><p class="neg">Acende: <strong>Fato_Sinistro</strong>, Dim_Sensor (SCD-2), Dim_TipoEvento, <strong>Dim_Tempo_Detalhe</strong>.</p><span class="kpi amber">↓ tempo de resposta</span></div>
+      <div class="card lb teal"><span class="tag">Usual · financeiro</span><h3>Devolução com condução agressiva</h3><p>O Flink (warm path) computa o score → <strong>Dim_FaixaConducao</strong> "Agressivo"; na devolução, a cobrança <em>exactly-once</em> soma km, consumo e a infração.</p><p class="neg">Acende: <strong>Fato_Cobranca</strong>, Fato_Telemetria_Diaria, Dim_FaixaConducao, Dim_TipoEvento.</p><span class="kpi">↑ receita / locação</span></div>
+      <div class="card lb blue"><span class="tag">Analítico · IA</span><h3>Pico no aeroporto + pane + concierge</h3><p>Markov condicional prevê a migração ao Galeão → reposiciona vazios; o batch prevê falha → agenda manutenção; o concierge (RAG) monta o roteiro.</p><p class="neg">Acende: Fato_Movimentacao, <strong>Fato_Manutencao</strong>, Fato_Telemetria_Diaria, Dim_Patio, Dim_Tempo_Detalhe.</p><span class="kpi blue">↑ utilização · ↓ downtime · ↑ NPS</span></div>
+    </div>
+    <div class="reveal d3 callout"><span class="k">Fundamentação</span><p>Cada caso ativa fatos e dimensões específicos — e três deles <strong>justificam a extensão do modelo</strong> (Dim_Tempo_Detalhe, Fato_Cobranca, Fato_Manutencao/Dim_Sensor). A modelagem não é abstrata: aparece no crítico, no usual e no analítico.</p></div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>20 / 25</span></div>
+</section>
+
+<!-- 21 · MATRIZ ENTIDADE × CASO (NOVO) -->
+<section class="slide" id="s-matriz">
+  <div class="head reveal"><div class="kicker"><span class="sec">19</span><span class="sep">/</span><span>Rastreabilidade das entidades</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Onde cada entidade modelada aparece</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2">
+      <table>
+        <thead><tr><th>Entidade &nbsp;<span class="mono" style="color:var(--teal)">✚ = extensão</span></th><th>1 · Colisão <span class="mono" style="color:var(--amber)">crítico</span></th><th>2 · Cobrança <span class="mono" style="color:var(--teal)">usual</span></th><th>3 · Frota <span class="mono" style="color:var(--accent)">analítico</span></th></tr></thead>
+        <tbody>
+          <tr><td><strong>Fato_Sinistro</strong> ✚</td><td>dossiê + resposta</td><td>—</td><td>—</td></tr>
+          <tr><td><strong>Fato_Cobranca</strong> ✚</td><td>recálculo da locação</td><td>valor ± acréscimos</td><td>—</td></tr>
+          <tr><td><strong>Fato_Telemetria_Diaria</strong> ✚</td><td>buffer pré-impacto</td><td>km, velocidade, eventos</td><td>base do score / manutenção</td></tr>
+          <tr><td><strong>Fato_Manutencao</strong> ✚</td><td>—</td><td>—</td><td>prob. de falha → agenda</td></tr>
+          <tr><td>Fato_Movimentacao</td><td>despacho ao pátio</td><td>—</td><td>Markov → reposicionamento</td></tr>
+          <tr><td>Fato_Reserva / Locação</td><td>veículo substituto</td><td>locação faturada</td><td>pool de disponíveis</td></tr>
+          <tr><td><strong>Dim_Sensor</strong> ✚ <span class="mono faint">SCD-2</span></td><td>firmware na hora do sinistro</td><td>—</td><td>saúde do sensor</td></tr>
+          <tr><td><strong>Dim_TipoEvento</strong> ✚</td><td>colisão</td><td>violação de trânsito</td><td>pane / superaquecimento</td></tr>
+          <tr><td><strong>Dim_FaixaConducao</strong> ✚</td><td>—</td><td>Agressivo → tarifa</td><td>perfil por veículo</td></tr>
+          <tr><td><strong>Dim_Tempo_Detalhe</strong> ✚</td><td>minuto 18:23</td><td>janelas da viagem</td><td>faixa horária / pico</td></tr>
+          <tr><td>Dim_Patio · Veículo · Cliente</td><td>pátio próximo · quem</td><td>retirada / devolução</td><td>origem / destino</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>21 / 25</span></div>
+</section>
+
+<!-- 22 · CUSTOS & POC -->
+<section class="slide" id="s20">
+  <div class="head reveal"><div class="kicker"><span class="sec">18</span><span class="sep">/</span><span>Custos, nuvem e prova de conceito</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Custo sob controle por design</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2 grid g3" style="margin-top:0.1rem">
+      <div class="card lb blue"><span class="tag">Banda / egress</span><h3>Filtrar na borda</h3><p>Agregar e não enviar vídeo bruto corta o maior custo recorrente da frota móvel.</p></div>
+      <div class="card lb"><span class="tag">Compute</span><h3>Elasticidade</h3><p>Autoscaling + instâncias spot/preemptíveis; clusters efêmeros no batch.</p></div>
+      <div class="card lb teal"><span class="tag">Storage</span><h3>Tiering</h3><p>Quente (Redis/Cassandra) vs. frio (Delta/object store), com TTL e Bronze→Gold.</p></div>
+    </div>
+    <div class="reveal d3 callout teal"><span class="k">Prova de conceito executável</span><p>Sistema <strong>docker-compose</strong> (Kafka, Flink, Spark, Cassandra, Mongo, Redis, MinIO, Streamlit) validado; DDL do DW estendido testado em PostgreSQL. Free tiers: Dataproc/Flink Playground, Databricks, Atlas, Astra, Redis, DynamoDB.</p></div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>22 / 25</span></div>
+</section>
+
+<!-- 21 · ALTERNATIVAS -->
+<section class="slide" id="s21">
+  <div class="head reveal"><div class="kicker"><span class="sec">18</span><span class="sep">/</span><span>Justificativa · por que NÃO</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Alternativas consideradas e descartadas</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2">
+      <table>
+        <thead><tr><th>Opção descartada</th><th>Por que não, neste contexto</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Somente Data Warehouse</strong></td><td>Batch e schema-on-write não dão tempo real nem absorvem sensores semiestruturados de alto volume.</td></tr>
+          <tr><td><strong>Somente processamento batch</strong></td><td>Emergências e roteirização exigem latência de segundos/milissegundos.</td></tr>
+          <tr><td><strong>Arquitetura Lambda</strong></td><td>Base de código dupla e risco de divergência; o problema é streaming-first.</td></tr>
+          <tr><td><strong>Um único banco relacional</strong></td><td>Não escala a escrita massiva de telemetria nem entrega cache sub-ms (CAP).</td></tr>
+          <tr><td><strong>Stream de vídeo bruto pela rede</strong></td><td>Banda móvel cara e finita; o vídeo fica na borda e sobe só o essencial.</td></tr>
+          <tr><td><strong>Ingestão HTTP síncrona no banco</strong></td><td>Sem contrapressão nem replay; a frota simultânea causaria perda de pacotes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>23 / 25</span></div>
+</section>
+
+<!-- 22 · REFERÊNCIAS (NOVO) -->
+<section class="slide" id="s22">
+  <div class="head reveal"><div class="kicker"><span class="sec">—</span><span class="sep">/</span><span>Referências (seleção)</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Fundamentos — referências primárias</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2 refs">
+      <p><span class="a">Armbrust, M. et al. (2015).</span> Spark SQL. SIGMOD.</p>
+      <p><span class="a">Armbrust, M. et al. (2020).</span> Delta Lake. PVLDB.</p>
+      <p><span class="a">Armbrust, M. et al. (2021).</span> Lakehouse. CIDR.</p>
+      <p><span class="a">Carbone, P. et al. (2015).</span> Apache Flink. IEEE Data Eng. Bull. + Lightweight Asynchronous Snapshots. arXiv:1506.08603.</p>
+      <p><span class="a">Cattell, R. (2011).</span> Scalable SQL and NoSQL Data Stores. SIGMOD Record.</p>
+      <p><span class="a">Chang, F. et al. (2006).</span> Bigtable. OSDI.</p>
+      <p><span class="a">Chaudhuri, S. & Dayal, U. (1997).</span> Overview of Data Warehousing and OLAP. SIGMOD Record.</p>
+      <p><span class="a">Corbett, J. C. et al. (2012).</span> Spanner. OSDI.</p>
+      <p><span class="a">Dean, J. & Ghemawat, S. (2004).</span> MapReduce. OSDI.</p>
+      <p><span class="a">DeCandia, G. et al. (2007).</span> Dynamo. SOSP.</p>
+      <p><span class="a">Fragkoulis, M. et al. (2020).</span> Survey on Stream Processing. arXiv:2008.00842.</p>
+      <p><span class="a">Ghemawat, S. et al. (2003).</span> The Google File System. SOSP.</p>
+      <p><span class="a">Gilbert, S. & Lynch, N. (2002).</span> Brewer's Conjecture (CAP). ACM SIGACT.</p>
+      <p><span class="a">Gray, J. et al. (1997).</span> Data Cube. DMKD.</p>
+      <p><span class="a">Guo, R. et al. (2022).</span> Manu: Cloud Native Vector DB. PVLDB.</p>
+      <p><span class="a">Kreps, J. et al. (2011).</span> Kafka. NetDB.</p>
+      <p><span class="a">Lakshman, A. & Malik, P. (2009).</span> Cassandra. LADIS/SIGOPS.</p>
+      <p><span class="a">Lewis, P. et al. (2020).</span> Retrieval-Augmented Generation. NeurIPS.</p>
+      <p><span class="a">Zaharia, M. et al. (2012).</span> Resilient Distributed Datasets (RDD). NSDI.</p>
+      <p><span class="a">Zaharia, M. et al. (2013).</span> Discretized Streams. SOSP.</p>
+    </div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>24 / 25</span></div>
+</section>
+
+<!-- 23 · CONCLUSÕES -->
+<section class="slide" id="s23">
+  <div class="head reveal"><div class="kicker"><span class="sec">—</span><span class="sep">/</span><span>Conclusões gerais</span></div></div>
+  <div class="body">
+    <h2 class="reveal d1">Síntese: fundamentos → arquitetura → valor</h2>
+    <div class="rule-h reveal d1"></div>
+    <div class="reveal d2 grid g2" style="margin-top:0.1rem">
+      <ul class="bl">
+        <li><strong>Fundamentada</strong> — cada camada ancorada em papers seminais (VLDB, DW, streaming, NoSQL).</li>
+        <li><strong>Borda + Kafka + Kappa/Delta</strong> — banda poupada, ordem por veículo, ACID lote↔stream.</li>
+        <li><strong>Três regimes</strong> — Spark (batch/emergências) e Flink (rotas).</li>
+        <li><strong>Poliglota</strong> — CAP aplicado: Cassandra, MongoDB, Redis, PostgreSQL/Delta.</li>
+      </ul>
+      <ul class="bl">
+        <li><strong>DW estendido</strong> — vira a camada Gold; novos fatos de telemetria/cobrança/sinistro.</li>
+        <li><strong>Serving + IA</strong> — dashboard, cobrança auditável, dossiês e concierge RAG.</li>
+        <li><strong>Valor ao cliente</strong> — ↑ utilização e receita, ↓ custo, downtime e tempo de resposta.</li>
+        <li><strong>Executável</strong> — sistema em docker-compose, validado.</li>
+      </ul>
+    </div>
+    <div class="reveal d3 callout"><span class="k">Conclusão</span><p>Uma arquitetura <strong>resiliente, escalável e em tempo real</strong>, teoricamente fundamentada, que envolve o DW da Avaliação 02 e entrega <strong>valor mensurável</strong> ao consórcio com custo de nuvem sob controle.</p></div>
+    <div class="reveal d4 cover-meta" style="margin-top:0.2rem"><span>Obrigado.</span><span>Perguntas?</span><span class="faint">Izabela Lima da Silva · Caio Meirelles · 2026.1</span></div>
+  </div>
+  <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>25 / 25</span></div>
+</section>
+
+</main>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap = document.getElementById('dots');
+  const progress = document.getElementById('progress');
+  let idx = 0, lock = false;
+  slides.forEach((_,i)=>{ const b=document.createElement('button');
+    b.setAttribute('aria-label','Ir ao slide '+(i+1)); b.addEventListener('click',()=>go(i)); dotsWrap.appendChild(b); });
+  const dots = Array.from(dotsWrap.children);
+  function setActive(i){ idx=Math.max(0,Math.min(slides.length-1,i));
+    dots.forEach((d,k)=>d.classList.toggle('on',k===idx)); progress.style.width=((idx+1)/slides.length*100)+'%'; }
+  function go(i){ setActive(i); slides[idx].scrollIntoView({behavior:'smooth'}); }
+  const io = new IntersectionObserver((es)=>{ es.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>0.55){ const i=slides.indexOf(e.target); if(i!==-1) setActive(i);
+      e.target.querySelectorAll('.reveal').forEach((el,k)=>setTimeout(()=>el.classList.add('in'),k*55)); }});
+  },{threshold:[0.55]});
+  slides.forEach(s=>io.observe(s));
+  document.addEventListener('keydown',(ev)=>{
+    if(['ArrowRight','ArrowDown','PageDown',' '].includes(ev.key)){ ev.preventDefault(); go(idx+1); }
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(ev.key)){ ev.preventDefault(); go(idx-1); }
+    else if(ev.key==='Home'){ ev.preventDefault(); go(0); } else if(ev.key==='End'){ ev.preventDefault(); go(slides.length-1); }
+  });
+  window.addEventListener('wheel',(ev)=>{ if(lock) return; if(Math.abs(ev.deltaY)<24) return;
+    lock=true; go(idx+(ev.deltaY>0?1:-1)); setTimeout(()=>lock=false,700); },{passive:true});
+  let ty=null;
+  window.addEventListener('touchstart',e=>ty=e.touches[0].clientY,{passive:true});
+  window.addEventListener('touchend',e=>{ if(ty===null) return; const dy=ty-e.changedTouches[0].clientY;
+    if(Math.abs(dy)>50) go(idx+(dy>0?1:-1)); ty=null; },{passive:true});
+  setActive(0);
+  slides[0].querySelectorAll('.reveal').forEach((el,k)=>setTimeout(()=>el.classList.add('in'),100+k*65));
+})();
+</script>

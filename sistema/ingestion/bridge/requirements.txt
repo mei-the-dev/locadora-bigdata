@@ -1,0 +1,3 @@
+# Ponte MQTT -> Kafka (Camada 1)
+paho-mqtt==1.6.1
+confluent-kafka==2.5.3

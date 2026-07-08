@@ -1,0 +1,3 @@
+# Simulador de frota (Camada 0 - Edge)
+paho-mqtt==1.6.1
+fastavro==1.9.4

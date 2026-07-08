@@ -1,0 +1,495 @@
+# ============================================================================
+# Solucao Big Data para Frota Autonoma Conectada - Avaliacao 03 (MAE016/EEL890)
+# Grupo: Izabela Lima da Silva (124156557) - Caio Meirelles (122071557)
+# ----------------------------------------------------------------------------
+# Perfis:
+#   core -> caminho end-to-end demonstravel (cabe em 16 GB):
+#           simulador -> MQTT -> Kafka -> Flink/Spark -> Delta/MinIO +
+#           Cassandra/MongoDB/Redis -> Postgres Gold -> Streamlit
+#   full -> extras (subir 1 por vez): Airflow (ELT), Neo4j (grafo), MLflow.
+#
+# Uso:  make up-core        (docker compose --profile core up -d)
+#       make up-full        (core + full)
+# Validar:  docker compose config
+# Limites de memoria (mem_limit) e heaps explicitos evitam OOM em 16 GB.
+# ============================================================================
+
+name: fleet-bigdata
+
+x-common-env: &common-env
+  TZ: America/Sao_Paulo
+
+networks:
+  fleet:
+    driver: bridge
+
+volumes:
+  minio-data:
+  cassandra-data:
+  mongo-data:
+  postgres-data:
+  redis-data:
+  neo4j-data:
+
+services:
+
+  # ==========================================================================
+  # Camada 1 - Ingestao: broker MQTT (campo IoT) + barramento de log Kafka
+  # ==========================================================================
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    profiles: [core]
+    container_name: fleet-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./ingestion/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks: [fleet]
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -t '$$SYS/#' -C 1 -W 3 -h localhost || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  redpanda:
+    image: redpandadata/redpanda:v24.2.7
+    profiles: [core]
+    container_name: fleet-redpanda
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --memory=1G
+      - --reserve-memory=0M
+      - --overprovisioned
+      - --node-id=0
+      - --check=false
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+    networks: [fleet]
+    mem_limit: 1200m
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -q 'Healthy:.*true' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  # cria os topicos com particao por vehicle_id (ordem estrita R1) e sai.
+  kafka-init:
+    image: redpandadata/redpanda:v24.2.7
+    profiles: [core]
+    container_name: fleet-kafka-init
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        for t in ${KAFKA_TOPIC_TELEMETRIA:-telemetry} ${KAFKA_TOPIC_EMERGENCIA:-emergency} ${KAFKA_TOPIC_VIAGEM:-trip}; do
+          rpk topic create "$$t" -p ${KAFKA_PARTICOES:-6} -r 1 --brokers redpanda:9092 || true
+        done
+        rpk topic list --brokers redpanda:9092
+    networks: [fleet]
+    restart: "no"
+
+  # ==========================================================================
+  # Camada 0 - Borda: simulador de frota (Avro + combiner) -> MQTT
+  # ==========================================================================
+  simulator:
+    build:
+      context: .
+      dockerfile: ./simulator/Dockerfile
+    profiles: [core]
+    container_name: fleet-simulator
+    restart: unless-stopped
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+    environment:
+      <<: *common-env
+      MQTT_HOST: ${MQTT_HOST:-mosquitto}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_TOPIC_TELEMETRIA: ${MQTT_TOPIC_TELEMETRIA:-frota/telemetria}
+      MQTT_TOPIC_EMERGENCIA: ${MQTT_TOPIC_EMERGENCIA:-frota/emergencia}
+      MQTT_TOPIC_VIAGEM: ${MQTT_TOPIC_VIAGEM:-frota/viagem}
+      FLEET_NUM_VEICULOS: ${FLEET_NUM_VEICULOS:-12}
+      FLEET_SEED: ${FLEET_SEED:-42}
+      FLEET_EDGE_WINDOW: ${FLEET_EDGE_WINDOW:-10}
+      FLEET_EMIT_INTERVAL_S: ${FLEET_EMIT_INTERVAL_S:-1.0}
+      FLEET_DESORDEM_MAX_MS: ${FLEET_DESORDEM_MAX_MS:-3000}
+      FLEET_PROB_EMERGENCIA: ${FLEET_PROB_EMERGENCIA:-0.02}
+    networks: [fleet]
+    mem_limit: 256m
+
+  # ==========================================================================
+  # Ponte MQTT -> Kafka (validacao/checksum, particao por vehicle_id)
+  # ==========================================================================
+  mqtt-bridge:
+    build:
+      context: .
+      dockerfile: ./ingestion/bridge/Dockerfile
+    profiles: [core]
+    container_name: fleet-mqtt-bridge
+    restart: unless-stopped
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+    environment:
+      <<: *common-env
+      MQTT_HOST: ${MQTT_HOST:-mosquitto}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_TOPIC_TELEMETRIA: ${MQTT_TOPIC_TELEMETRIA:-frota/telemetria}
+      MQTT_TOPIC_EMERGENCIA: ${MQTT_TOPIC_EMERGENCIA:-frota/emergencia}
+      MQTT_TOPIC_VIAGEM: ${MQTT_TOPIC_VIAGEM:-frota/viagem}
+      KAFKA_BROKER: ${KAFKA_BROKER:-redpanda:9092}
+      KAFKA_TOPIC_TELEMETRIA: ${KAFKA_TOPIC_TELEMETRIA:-telemetry}
+      KAFKA_TOPIC_EMERGENCIA: ${KAFKA_TOPIC_EMERGENCIA:-emergency}
+      KAFKA_TOPIC_VIAGEM: ${KAFKA_TOPIC_VIAGEM:-trip}
+    networks: [fleet]
+    mem_limit: 256m
+
+  # ==========================================================================
+  # Camada 3 - Lakehouse: MinIO (object store S3 para Delta Bronze/Silver/Gold)
+  # ==========================================================================
+  minio:
+    image: minio/minio:RELEASE.2024-10-13T13-34-11Z
+    profiles: [core]
+    container_name: fleet-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      <<: *common-env
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-fleetadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-fleetsecret123}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks: [fleet]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "mc ready local || curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:RELEASE.2024-10-08T09-37-26Z
+    profiles: [core]
+    container_name: fleet-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        mc alias set fleet ${MINIO_ENDPOINT:-http://minio:9000} ${MINIO_ROOT_USER:-fleetadmin} ${MINIO_ROOT_PASSWORD:-fleetsecret123} &&
+        mc mb --ignore-existing fleet/${MINIO_BUCKET:-lakehouse} &&
+        mc mb --ignore-existing fleet/${MINIO_BUCKET:-lakehouse}/bronze &&
+        mc ls fleet
+    networks: [fleet]
+    restart: "no"
+
+  # ==========================================================================
+  # Camada 2 - Processamento: Flink (analise continua, event-time/watermarks)
+  # ==========================================================================
+  flink-jobmanager:
+    build:
+      context: ./streaming/flink
+      dockerfile: Dockerfile
+    image: fleet-flink:1.18.1
+    profiles: [core]
+    container_name: fleet-flink-jm
+    restart: unless-stopped
+    command: jobmanager
+    ports:
+      - "8081:8081"
+    environment:
+      <<: *common-env
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: flink-jobmanager
+        jobmanager.memory.process.size: 1024m
+        parallelism.default: 2
+    volumes:
+      - ./streaming/flink/jobs:/opt/flink/jobs:ro
+      - ./fleetlib:/opt/flink/fleetlib:ro
+    networks: [fleet]
+    mem_limit: 1200m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8081/overview || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  flink-taskmanager:
+    build:
+      context: ./streaming/flink
+      dockerfile: Dockerfile
+    image: fleet-flink:1.18.1
+    profiles: [core]
+    container_name: fleet-flink-tm
+    restart: unless-stopped
+    command: taskmanager
+    depends_on:
+      flink-jobmanager:
+        condition: service_started
+    environment:
+      <<: *common-env
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: flink-jobmanager
+        taskmanager.numberOfTaskSlots: ${FLINK_TM_SLOTS:-2}
+        taskmanager.memory.process.size: 1280m
+    volumes:
+      - ./streaming/flink/jobs:/opt/flink/jobs:ro
+      - ./fleetlib:/opt/flink/fleetlib:ro
+    networks: [fleet]
+    mem_limit: 1400m
+
+  # ==========================================================================
+  # Camada 2 - Processamento: Spark (hot path emergencias + ELT Delta + batch)
+  # ==========================================================================
+  spark:
+    image: bitnami/spark:3.5.1
+    profiles: [core]
+    container_name: fleet-spark
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      SPARK_MODE: master
+      SPARK_DRIVER_MEMORY: ${SPARK_DRIVER_MEMORY:-1g}
+      SPARK_EXECUTOR_MEMORY: ${SPARK_EXECUTOR_MEMORY:-1g}
+      KAFKA_BROKER: ${KAFKA_BROKER:-redpanda:9092}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-http://minio:9000}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-fleetadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-fleetsecret123}
+      MINIO_BUCKET: ${MINIO_BUCKET:-lakehouse}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres-gold}
+      POSTGRES_DB: ${POSTGRES_DB:-dw}
+      POSTGRES_USER: ${POSTGRES_USER:-dw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dwsecret}
+      CASSANDRA_HOST: ${CASSANDRA_HOST:-cassandra}
+    ports:
+      - "8080:8080"
+      - "4040:4040"
+    volumes:
+      - ./batch/spark:/opt/fleet/spark:ro
+      - ./fleetlib:/opt/fleet/fleetlib:ro
+      - ./warehouse:/opt/fleet/warehouse:ro
+      - ./simulator/schemas:/opt/fleet/spark/schemas:ro
+    networks: [fleet]
+    mem_limit: 1500m
+
+  # ==========================================================================
+  # Camada 4 - Persistencia poliglota
+  # ==========================================================================
+  cassandra:
+    image: cassandra:4.1
+    profiles: [core]
+    container_name: fleet-cassandra
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      CASSANDRA_CLUSTER_NAME: FleetCluster
+      MAX_HEAP_SIZE: ${CASSANDRA_MAX_HEAP:-1G}
+      HEAP_NEWSIZE: ${CASSANDRA_HEAP_NEWSIZE:-200M}
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+      # Cassandra nao roda initdb.d automaticamente: aplicado por `make seed`
+      # (docker compose exec cassandra cqlsh -f /init.cql).
+      - ./persistence/cassandra/init.cql:/init.cql:ro
+    networks: [fleet]
+    mem_limit: 1600m
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'DESCRIBE KEYSPACES' || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 12
+
+  mongodb:
+    image: mongo:7.0
+    profiles: [core]
+    container_name: fleet-mongodb
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-frota}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-frotasecret}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-frota}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./persistence/mongodb/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks: [fleet]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand({ping:1})' || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+
+  redis:
+    image: redis:7.2-alpine
+    profiles: [core]
+    container_name: fleet-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--maxmemory", "96mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks: [fleet]
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  # ==========================================================================
+  # Camada GOLD - PostgreSQL (DW estrela estendido + pgvector p/ RAG)
+  # ==========================================================================
+  postgres-gold:
+    image: pgvector/pgvector:pg16
+    profiles: [core]
+    container_name: fleet-postgres-gold
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      POSTGRES_DB: ${POSTGRES_DB:-dw}
+      POSTGRES_USER: ${POSTGRES_USER:-dw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dwsecret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./warehouse/init:/docker-entrypoint-initdb.d:ro
+      - ./warehouse:/warehouse:ro           # lgpd.sql / relatorios sob demanda
+    networks: [fleet]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dw} -d ${POSTGRES_DB:-dw} || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+
+  # ==========================================================================
+  # Camada 5 - Serving: dashboard Streamlit (OLAP sobre Gold + cache Redis)
+  # ==========================================================================
+  streamlit:
+    build:
+      context: .
+      dockerfile: ./app/dashboard/Dockerfile
+    profiles: [core]
+    container_name: fleet-streamlit
+    restart: unless-stopped
+    depends_on:
+      postgres-gold:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      <<: *common-env
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres-gold}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-dw}
+      POSTGRES_USER: ${POSTGRES_USER:-dw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dwsecret}
+      POSTGRES_SCHEMA: ${POSTGRES_SCHEMA:-dw_locadora}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_TTL_S: ${REDIS_TTL_S:-15}
+      MONGO_HOST: ${MONGO_HOST:-mongodb}
+      MONGO_PORT: ${MONGO_PORT:-27017}
+      MONGO_DB: ${MONGO_DB:-frota}
+      MONGO_USER: ${MONGO_INITDB_ROOT_USERNAME:-frota}
+      MONGO_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-frotasecret}
+    ports:
+      - "${STREAMLIT_PORT:-8501}:8501"
+    volumes:
+      - ./tests:/app/tests:ro   # permite `make e2e` (demo_flow) sem rebuild
+    networks: [fleet]
+    mem_limit: 512m
+
+  # ==========================================================================
+  # PERFIL FULL (extras - subir 1 por vez; ver README secao "16 GB")
+  # ==========================================================================
+  airflow:
+    build:
+      context: ./orchestration/airflow
+      dockerfile: Dockerfile
+    image: fleet-airflow:2.9.3
+    profiles: [full]
+    container_name: fleet-airflow
+    restart: unless-stopped
+    user: "0:0"   # root p/ acessar o socket do Docker (orquestra containers irmaos)
+    depends_on:
+      postgres-gold:
+        condition: service_healthy
+    environment:
+      <<: *common-env
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-dw}:${POSTGRES_PASSWORD:-dwsecret}@${POSTGRES_HOST:-postgres-gold}:5432/${POSTGRES_DB:-dw}
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+      _AIRFLOW_WWW_USER_USERNAME: admin
+      _AIRFLOW_WWW_USER_PASSWORD: admin
+    ports:
+      - "8088:8080"
+    volumes:
+      - ./orchestration/airflow/dags:/opt/airflow/dags:ro
+      - ./batch/spark:/opt/airflow/spark:ro
+      - ./fleetlib:/opt/airflow/fleetlib:ro
+      - /var/run/docker.sock:/var/run/docker.sock  # dispara jobs nos containers irmaos
+    command: ["bash", "-c", "airflow db migrate && airflow users create --username admin --password admin --firstname a --lastname b --role Admin --email a@b.c || true; airflow standalone"]
+    networks: [fleet]
+    mem_limit: 1500m
+
+  neo4j:
+    image: neo4j:5.20-community
+    profiles: [full]
+    container_name: fleet-neo4j
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/frotaneo4j}
+      NEO4J_server_memory_heap_max__size: ${NEO4J_HEAP:-512M}
+      NEO4J_server_memory_pagecache_size: 256M
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j-data:/data
+      - ./graph/neo4j/init.cypher:/init.cypher:ro
+    networks: [fleet]
+    mem_limit: 1200m
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: ./ai/mlops/Dockerfile
+    profiles: [full]
+    container_name: fleet-mlflow
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      BACKEND_URI: sqlite:////mlflow/mlflow.db
+      ARTIFACT_ROOT: /mlflow/artifacts
+    ports:
+      - "5000:5000"
+    networks: [fleet]
+    mem_limit: 512m

@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "ViagemAutonoma",
+  "namespace": "frota.avro",
+  "doc": "Viagem autonoma (inclui reposicionamento do veiculo VAZIO entre patios - R12/R13). Vai ao topico `trip`. Alimenta Fato_Movimentacao (base da matriz de Markov) e a roteirizacao (Neo4j).",
+  "fields": [
+    {"name": "vehicle_id", "type": "string"},
+    {"name": "empresa", "type": "string"},
+    {"name": "event_ts", "type": "long"},
+    {"name": "id_viagem", "type": "string"},
+    {"name": "patio_origem", "type": "string"},
+    {"name": "patio_destino", "type": "string"},
+    {"name": "vazio", "type": "boolean", "doc": "true = reposicionamento sem cliente a bordo"},
+    {"name": "motivo", "type": {"type": "enum", "name": "MotivoViagem",
+      "symbols": ["Locacao", "Reposicionamento", "Manutencao", "Devolucao"]}},
+    {"name": "distancia_km", "type": "double"}
+  ]
+}

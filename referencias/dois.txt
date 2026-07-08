@@ -1,0 +1,25 @@
+# Referências fundamentais — Solução Big Data / Frota Autônoma Conectada (MAE016)
+# DOI  # citekey — assunto no projeto
+
+# ── Processamento em larga escala (batch/stream) ──
+10.1145/1327452.1327492    # DeanGhemawat2008 — MapReduce: Simplified Data Processing on Large Clusters
+10.1145/945445.945450      # Ghemawat2003 — The Google File System
+10.1145/1365815.1365816    # Chang2008 — Bigtable: A Distributed Storage System
+10.1145/2723372.2742797    # Armbrust2015 — Spark SQL: Relational Data Processing in Spark
+10.1145/2517349.2522737    # Zaharia2013 — Discretized Streams (Spark Streaming)
+10.48550/arXiv.1506.08603  # Carbone2015 — Lightweight Asynchronous Snapshots (Flink)
+10.14778/3415478.3415560   # Armbrust2020 — Delta Lake: ACID Table Storage over Cloud Object Stores
+
+# ── NoSQL e sistemas distribuídos (persistência poliglota) ──
+10.1145/1294261.1294281    # DeCandia2007 — Dynamo: Amazon's Highly Available Key-value Store
+10.1145/1773912.1773922    # Lakshman2010 — Cassandra: A Decentralized Structured Storage System
+10.1145/564585.564601      # GilbertLynch2002 — Brewer's conjecture (CAP theorem)
+10.1145/1978915.1978919    # Cattell2011 — Scalable SQL and NoSQL Data Stores
+
+# ── Borda / IoT / streaming (edge computing, ordenação) ──
+10.1109/JIOT.2016.2579198  # Shi2016 — Edge Computing: Vision and Challenges
+10.48550/arXiv.2008.00842  # Fragkoulis2020 — A Survey on the Evolution of Stream Processing Systems
+
+# ── Data Warehouse / OLAP (Avaliação 02) ──
+10.1145/248603.248616      # ChaudhuriDayal1997 — An Overview of Data Warehousing and OLAP
+10.1023/A:1009726021843    # Gray1997 — Data Cube: Relational Aggregation Operator

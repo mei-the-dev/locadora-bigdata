@@ -1,0 +1,5 @@
+# Livros — fundamentos consolidados (ISBN | citekey | título)
+9781449373320 | Kleppmann2017 | Designing Data-Intensive Applications
+9781118530801 | KimballRoss2013 | The Data Warehouse Toolkit 3rd Edition
+9781617290343 | MarzWarren2015 | Big Data Principles and best practices of scalable realtime data systems
+9780321826626 | SadalageFowler2012 | NoSQL Distilled
