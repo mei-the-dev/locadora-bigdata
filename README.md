@@ -46,7 +46,7 @@ dos eventos por veículo e *timestamp*, mesmo sob forte estresse de carga.
 | 1 | **Proposta Executiva** (PDF) | [`proposta-executiva.pdf`](proposta-executiva.pdf) — versão para a diretoria (valor de negócio) · [`proposta-executiva-tecnica.pdf`](proposta-executiva-tecnica.pdf) — versão técnica detalhada (arquitetura, decisões, robustez, figuras) |
 | 2 | **Slides da defesa** (PDF) | [`apresentacao.pdf`](apresentacao.pdf) — capa com os componentes (nome + DRE), índice e slide final de conclusões |
 | 3 | **Folha de rosto** + **README** da estrutura | [`folha-de-rosto.md`](folha-de-rosto.md) + este arquivo |
-| — | **Outro desenvolvimento / extensão** | Extensão do DW (`referencias/dw/`), documentos de apoio (`docs/`) e sistema executável (`sistema/`) |
+| — | **Outro desenvolvimento / extensão** | Extensão do DW (`referencias/dw/`), material de apoio e estudo (`docs/`, notas do apresentador, guia de estudo) e sistema executável (`sistema/`) |
 
 As fontes em HTML acompanham cada PDF (`*.html`), para regeneração e edição.
 
@@ -103,11 +103,13 @@ O DDL da extensão (`referencias/dw/06_ddl_extensao.sql`) foi validado em Postgr
 ├── proposta-executiva.pdf / .html     # Proposta Executiva — versão diretoria (valor)
 ├── proposta-executiva-tecnica.pdf/.html  # Proposta Executiva — versão técnica (arquitetura)
 ├── apresentacao.pdf / .html           # slides da defesa oral (25 slides)
+├── notas-apresentacao.pdf / .html     # roteiro do apresentador + banco de Q&A
 │
-├── docs/                              # desenvolvimento de apoio
+├── docs/                              # desenvolvimento de apoio e estudo
 │   ├── plano-implementacao.md         # plano completo (requisitos × ementa × fundamentos)
 │   ├── revisao-teorica.md             # revisão teórica das 4 partes da ementa (citada)
-│   └── fundamentos-conceitos.md       # conceitos consolidados das referências
+│   ├── fundamentos-conceitos.md       # conceitos consolidados das referências
+│   └── guia-de-estudo.md / .pdf       # guia de estudo do grupo (fundamentos + casos + Q&A)
 │
 ├── referencias/
 │   ├── dois.txt · books.txt           # bibliografia (DOIs dos papers + livros)

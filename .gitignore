@@ -3,14 +3,13 @@
 Thumbs.db
 .claude/
 
-# Material INTERNO (não faz parte da entrega no AVA — mantido só localmente)
+# Material INTERNO (mantido só localmente)
+# notas-apresentacao.md = fonte markdown legada (o .html é a versão canônica)
+# notas.css = dependência do build pandoc do guia
+# docs/guia-de-estudo.html = artefato de build do pandoc (o .md/.pdf vão ao repo)
 notas-apresentacao.md
-notas-apresentacao.html
-notas-apresentacao.pdf
 notas.css
-docs/guia-de-estudo.md
 docs/guia-de-estudo.html
-docs/guia-de-estudo.pdf
 relatorio-academico.html
 relatorio-academico.pdf
 

@@ -1,0 +1,256 @@
+<!--
+  Notas de Apresentação — Defesa Oral (1 hora) · MAE016 / UFRJ
+  Material de apoio do apresentador. Hand-styled (sem pandoc) para formatação correta e rica.
+  Exportar PDF: navegador > Imprimir > PDF > A4 > "Gráficos de plano de fundo".
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+:root{
+  --ink:#1a1b1e; --ink-2:#3b3e46; --muted:#656974; --faint:#9a9ca4;
+  --rule:#e0ddd0; --rule-2:#cec9b8; --bg:#fff; --paper:#f5f3ec; --paper-2:#eeebe0; --card:#fff;
+  --accent:#26418f; --accent-s:#e9edf9; --plum:#6d2f86; --plum-s:#f1e9f4;
+  --amber:#9a5a12; --amber-s:#f5ecd9; --teal:#0f6f52; --teal-s:#e4f0ea; --red:#a63142;
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+}
+body{ font-family:var(--sans); color:var(--ink-2); background:var(--bg); line-height:1.5; font-size:14px; max-width:880px; margin:0 auto; padding:40px 48px 56px; }
+h1{ font-family:var(--serif); font-weight:700; font-size:2.1rem; color:var(--ink); line-height:1.1; }
+.sub{ font-size:0.86rem; color:var(--muted); margin-top:0.4em; }
+.sub strong{ color:var(--ink); }
+h2.sec{ font-family:var(--serif); font-weight:600; font-size:1.35rem; color:var(--ink); margin:1.8em 0 0.7em; padding-top:0.5em; border-top:2px solid var(--ink); display:flex; align-items:center; gap:0.6rem; }
+h2.sec .tag{ font-family:var(--mono); font-size:0.6rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.2em 0.6em; border-radius:3px; }
+h2.sec .tag.a{ background:var(--accent-s); color:var(--accent); } h2.sec .tag.b{ background:var(--plum-s); color:var(--plum); } h2.sec .tag.c{ background:var(--paper-2); color:var(--muted); }
+code{ font-family:var(--mono); font-size:0.83em; background:var(--paper-2); border:1px solid var(--rule); border-radius:4px; padding:0.03em 0.35em; color:var(--ink); }
+strong{ color:var(--ink); font-weight:600; } em{ color:var(--ink-2); }
+
+.format{ border:1px solid var(--rule); border-left:4px solid var(--accent); background:var(--paper); border-radius:0 8px 8px 0; padding:14px 20px; margin:1.2em 0; font-size:0.9rem; }
+.format .k{ font-family:var(--mono); font-size:0.66rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:0.3em; }
+
+.divisao{ background:var(--paper); border:1px solid var(--rule); border-radius:9px; padding:14px 20px; margin:1em 0; }
+.divisao ul{ list-style:none; }
+.divisao li{ padding:0.28em 0; padding-left:1.3em; position:relative; font-size:0.9rem; }
+.divisao li::before{ content:"—"; position:absolute; left:0; color:var(--accent); }
+.bd{ font-family:var(--mono); font-size:0.62rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.12em 0.5em; border-radius:3px; }
+.bd.a{ background:var(--accent-s); color:var(--accent); } .bd.b{ background:var(--plum-s); color:var(--plum); } .bd.c{ background:var(--paper-2); color:var(--muted); } .bd.br{ background:var(--amber-s); color:var(--amber); }
+
+table{ width:100%; border-collapse:collapse; margin:0.8em 0; font-size:0.85rem; }
+th,td{ text-align:left; padding:7px 12px; border-bottom:1px solid var(--rule); vertical-align:top; }
+thead th{ background:var(--paper-2); color:var(--ink); font-weight:600; font-size:0.78rem; }
+td.c2,th.c2{ text-align:right; white-space:nowrap; font-family:var(--mono); font-size:0.8rem; }
+
+.sn{ background:var(--card); border:1px solid var(--rule); border-left:4px solid var(--ink); border-radius:9px; padding:12px 18px; margin:10px 0; box-shadow:0 1px 2px rgba(26,27,30,0.04); break-inside:avoid; page-break-inside:avoid; }
+.sn.a{ border-left-color:var(--accent); } .sn.b{ border-left-color:var(--plum); } .sn.br{ border-left-color:var(--amber); }
+.sn-head{ display:flex; align-items:baseline; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.3em; }
+.sn-num{ font-family:var(--mono); font-weight:700; font-size:0.9rem; color:#fff; background:var(--ink); border-radius:5px; padding:0.1em 0.5em; min-width:2.1em; text-align:center; }
+.sn.a .sn-num{ background:var(--accent); } .sn.b .sn-num{ background:var(--plum); } .sn.br .sn-num{ background:var(--amber); }
+.sn-title{ font-family:var(--serif); font-weight:600; font-size:1.08rem; color:var(--ink); }
+.sn-time{ font-family:var(--mono); font-size:0.68rem; color:var(--muted); margin-left:auto; white-space:nowrap; }
+.sn-note{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--amber); background:var(--amber-s); padding:0.12em 0.5em; border-radius:3px; }
+.sn ul{ list-style:none; margin-top:0.3em; }
+.sn li{ position:relative; padding-left:1.2em; margin:0.2em 0; line-height:1.42; font-size:0.88rem; }
+.sn li::before{ content:"\203A"; position:absolute; left:0; color:var(--accent); font-weight:700; }
+.sn ul ul{ margin:0.15em 0 0.15em 0.3em; }
+.sn ul ul li{ font-size:0.85rem; } .sn ul ul li::before{ content:"\00B7"; color:var(--muted); }
+
+.qa{ margin:0.5em 0; }
+.qa .grp{ font-family:var(--mono); font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin:1.1em 0 0.4em; }
+.qa .item{ border-left:3px solid var(--rule-2); padding:0.35em 0 0.35em 0.9em; margin:0.5em 0; break-inside:avoid; }
+.qa .q{ font-weight:600; color:var(--ink); font-size:0.9rem; }
+.qa .a{ font-size:0.88rem; color:var(--ink-2); margin-top:0.15em; }
+
+@page{ size:A4; margin:15mm 14mm; }
+@media print{
+  body{ padding:0; max-width:none; font-size:10.4pt; }
+  h2.sec{ break-after:avoid; } .sn,.qa .item,.format,.divisao{ break-inside:avoid; }
+  tr{ break-inside:avoid; } thead{ display:table-header-group; }
+}
+@media (max-width:640px){ body{ padding:26px 18px; } }
+</style>
+
+<h1>Notas de Apresentação — Defesa Oral <span style="font-weight:500;color:var(--muted)">(1 hora)</span></h1>
+<p class="sub"><strong>Avaliação 03: Solução Big Data</strong> · MAE016.15912 · UFRJ/NCE · Prof. Milton Ramos Ramirez</p>
+<p class="sub"><strong>Grupo:</strong> Izabela Lima da Silva (DRE 124156557) · Caio Meirelles (DRE 122071557) · <strong>25 slides</strong></p>
+
+<div class="format"><span class="k">Formato</span>1 hora total → <strong>~45 min de apresentação + ~15 min de perguntas</strong> do professor. Ritmo médio ~2 min/slide (blocos técnicos da Parte A podem ir mais fundo). O critério da avaliação é <strong>explicar e justificar</strong> cada escolha — sempre conectando à <strong>teoria (referência citada)</strong> e ao <strong>valor de negócio</strong>.</div>
+
+<div class="divisao">
+  <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5em">Divisão da defesa (Izabela / Caio)</div>
+  <ul>
+    <li><span class="bd c">Comum</span> &nbsp;slides <strong>1–9</strong> (abertura → arquitetura) e <strong>20–25</strong> (casos de uso, custos, alternativas, referências, conclusões).</li>
+    <li><span class="bd a">Parte A</span> &nbsp;slides <strong>10–15</strong> — borda, Kafka, conectividade, Lambda×Kappa, Delta Lake, processamento.</li>
+    <li><span class="bd b">Parte B</span> &nbsp;slides <strong>16–19</strong> — persistência poliglota, dashboard, cobrança+emergências, concierge.</li>
+    <li><span class="bd br">Ponte A↔B</span> &nbsp;slide <strong>18</strong> (cobrança e emergências) — bom ponto de troca de bastão.</li>
+    <li>Sugestão: quem defende a Parte A abre (1–9); quem defende a Parte B fecha (20–25).</li>
+  </ul>
+</div>
+
+<table>
+  <thead><tr><th>Bloco</th><th class="c2">Slides</th><th class="c2">Tempo</th></tr></thead>
+  <tbody>
+    <tr><td>Abertura + contexto + valor</td><td class="c2">1–4</td><td class="c2">~7 min</td></tr>
+    <tr><td>Requisitos + metodologia + fundamentos</td><td class="c2">5–7</td><td class="c2">~8 min</td></tr>
+    <tr><td>DW/extensão + arquitetura</td><td class="c2">8–9</td><td class="c2">~5 min</td></tr>
+    <tr><td><strong>Parte A</strong> (borda → processamento)</td><td class="c2">10–15</td><td class="c2">~13 min</td></tr>
+    <tr><td><strong>Parte B</strong> (persistência → concierge)</td><td class="c2">16–19</td><td class="c2">~8 min</td></tr>
+    <tr><td><strong>Casos de uso</strong> + rastreabilidade</td><td class="c2">20–21</td><td class="c2">~4 min</td></tr>
+    <tr><td>Custos + alternativas + referências + conclusões</td><td class="c2">22–25</td><td class="c2">~4 min</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec"><span class="tag c">Comum</span> Abertura e enquadramento &nbsp;<span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted)">slides 1–9</span></h2>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">1</span><span class="sn-title">Capa</span><span class="sn-time">≈40 s</span></div>
+<ul><li>Apresentar o grupo (Izabela + Caio, com DRE), a disciplina e o tema.</li>
+<li>Gancho: <em>"Cada veículo da nova frota é um sensor sobre rodas. Vamos mostrar uma arquitetura que transforma esse dilúvio de dados em decisão de negócio em tempo real — fundamentada na literatura e voltada a valor mensurável para o consórcio."</em></li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">2</span><span class="sn-title">Índice</span><span class="sn-time">≈30 s</span></div>
+<ul><li>18 seções em 25 slides. Sinalizar que a defesa <strong>cobre os dois trabalhos</strong> (DW da Aval. 02 + Big Data) e as <strong>etiquetas Parte A/B</strong> mostram quem defende cada bloco.</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">3</span><span class="sn-title">Contexto e problema</span><span class="sn-time">≈1 min 30</span></div>
+<ul><li>Cenário: consórcio de 6 locadoras → veículos autônomos que se deslocam sozinhos.</li>
+<li>Três vetores: fonte de dados (veículo instrumentado), escala (frota simultânea), ambição (autonomia + IA).</li>
+<li>Fechar com a tese: <strong>"o DW sozinho não basta"</strong> — é preciso Big Data.</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">4</span><span class="sn-title">Valor para o cliente</span><span class="sn-note">slide de negócio</span><span class="sn-time">≈2 min</span></div>
+<ul><li>Aqui você "vende" a solução. Percorrer os 6 ganhos e nomear o indicador:<ul><li>Utilização (Markov + rotas) · Receita (cobrança dinâmica) · Custo (sem balcão) · Sinistros (resposta/dossiê) · Downtime (manutenção preditiva) · Experiência (concierge).</li></ul></li>
+<li>Frase-âncora: <em>"cada decisão técnica a seguir existe para mover um destes indicadores — a arquitetura é meio, o valor é o fim."</em></li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">5</span><span class="sn-title">Objetivos e requisitos</span><span class="sn-time">≈2 min</span></div>
+<ul><li><strong>Funcionais:</strong> dashboard, reserva, cobrança automática, emergências + extra (concierge).</li>
+<li><strong>Não funcionais (5 desafios):</strong> banda finita, alta concorrência, ordenação estrita, resiliência, ACID. Dizer: <em>"estes cinco requisitos guiam TODAS as decisões seguintes."</em></li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">6</span><span class="sn-title">Metodologia</span><span class="sn-time">≈2 min</span></div>
+<ul><li>6 etapas: requisitos → <strong>revisão de 21 referências primárias</strong> (papers seminais, mapeados às 4 partes da ementa) → decisão fundamentada → seleção por padrão de acesso → <strong>prova de conceito executável</strong> (docker-compose + DDL validado) → continuidade com o DW.</li>
+<li>Enfatizar o rigor: <em>"não escolhemos por moda; cada camada tem lastro teórico citado e foi validada em código."</em></li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">7</span><span class="sn-title">Fundamentos teóricos</span><span class="sn-note">o professor vai cobrar</span><span class="sn-time">≈3 min</span></div>
+<ul><li>Percorrer a tabela pelas 4 partes da ementa, 1 frase por linha, citando o autor:<ul>
+<li><strong>I</strong> — falha é a norma (Ghemawat 2003) e localidade (Dean &amp; Ghemawat 2004); ordem/TrueTime (Corbett 2012).</li>
+<li><strong>II</strong> — OLAP separado do OLTP e CUBE (Chaudhuri &amp; Dayal 1997; Gray 1997); Lakehouse (Armbrust 2021).</li>
+<li><strong>III</strong> — log particionado (Kreps 2011), watermarks (Carbone 2015), exactly-once (Zaharia 2013); RAG (Lewis 2020).</li>
+<li><strong>IV</strong> — CAP (Gilbert &amp; Lynch 2002), Dynamo/Cassandra (DeCandia 2007; Lakshman 2009).</li></ul></li>
+<li>Deixar claro: <strong>cada princípio ancora uma decisão nossa</strong> (coluna "onde aplicamos").</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">8</span><span class="sn-title">Do DW ao Big Data + extensão</span><span class="sn-note">cobre a Aval. 02</span><span class="sn-time">≈2 min 30</span></div>
+<ul><li><strong>Esquerda (nosso DW real):</strong> esquema estrela PostgreSQL; fatos Reserva/Locação/Movimentação (fact constellation); dims conformadas; 4 OLTP; Markov. OLAP separado do OLTP (Chaudhuri &amp; Dayal 1997).</li>
+<li><strong>Direita (a EXTENSÃO — novidade da Aval. 03):</strong> 4 novos fatos (Telemetria, Cobrança, Sinistro, Manutenção) + novas dims (Tempo_Detalhe minuto, Sensor SCD-2, TipoEvento, FaixaCondução), carregados por ELT do Silver. <strong>DDL validado</strong> rodando 01+06 num PostgreSQL real.</li>
+<li><strong>Reconciliação com a Parte 2:</strong> a <em>Fato_Cobranca</em> dá continuidade ao <code>Pagamento</code> (valor) do OLTP da Parte I — que foi esboçado como Fato_Pagamento —, agora materializado na Gold e enriquecido com ajustes dinâmicos. Não é "lacuna", é evolução.</li>
+<li><strong>Mensagem:</strong> não substituímos o DW — ele <strong>vira a camada Gold</strong> do Lakehouse (Armbrust 2021). Continuidade, não retrabalho.</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">9</span><span class="sn-title">Arquitetura de referência</span><span class="sn-note">slide central</span><span class="sn-time">≈2 min 30</span></div>
+<ul><li>Percorrer o pipeline: Borda → Kafka → Spark/Flink → Delta (Bronze/Silver/Gold) → NoSQL → Serving.</li>
+<li>Explicar os <strong>3 caminhos</strong> (hot/warm/cold). É o mapa; volte a ele se a banca se perder.</li></ul></div>
+
+<h2 class="sec"><span class="tag a">Parte A</span> Infraestrutura e fluxo &nbsp;<span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted)">slides 10–15</span></h2>
+
+<div class="sn a"><div class="sn-head"><span class="sn-num">10</span><span class="sn-title">Borda / Edge</span><span class="sn-time">≈2 min 15</span></div>
+<ul><li>Fundamento: <strong>localidade</strong> — o <em>combiner</em> do MapReduce aplicado à borda (Dean &amp; Ghemawat 2004).</li>
+<li><strong>Dois fluxos:</strong> rotina (Avro/MQTT a cada 1 s) vs. crítico (colisão detectada na borda, reação sub-segundo, ring buffer ~30 s).</li>
+<li><strong>Valor:</strong> corta o maior custo recorrente (egress); a decisão crítica não espera a nuvem; store-and-forward = zero perda.</li></ul></div>
+
+<div class="sn a"><div class="sn-head"><span class="sn-num">11</span><span class="sn-title">Ingestão / Kafka</span><span class="sn-time">≈2 min 15</span></div>
+<ul><li>Kafka = <strong>log distribuído particionado</strong> (Kreps 2011): pull por offset, retenção, buffer durável sob banda finita.</li>
+<li><strong>Tópicos isolados</strong> (<code>telemetry.raw</code> vs <code>alerts.critical</code>) — o alarme nunca fica preso. <strong>Partição por <code>vehicle_id</code></strong> → ordem por veículo sem coordenação global. Replicação/ISR (Ghemawat 2003). At-least-once + dedup por chave. Avro + Schema Registry.</li></ul></div>
+
+<div class="sn a"><div class="sn-head"><span class="sn-num">12</span><span class="sn-title">Conectividade e ordenação</span><span class="sn-note">cobre A3</span><span class="sn-time">≈2 min</span></div>
+<ul><li>Zonas de sombra (túneis) → dados atrasados/fora de ordem.</li>
+<li>Três camadas: <strong>borda</strong> (Avro + store-and-forward), <strong>Kafka</strong> (ordem por <code>vehicle_id</code>), <strong>Flink</strong> (event-time + <strong>watermarks</strong> reordenam pelo timestamp do veículo).</li>
+<li>Analogia forte: o rigor de ordem que o <strong>Spanner</strong> obtém com TrueTime (Corbett 2012), o Flink emula com watermarks (Carbone 2015).</li></ul></div>
+
+<div class="sn a"><div class="sn-head"><span class="sn-num">13</span><span class="sn-title">Lambda vs. Kappa</span><span class="sn-note">decisão cobrada</span><span class="sn-time">≈2 min</span></div>
+<ul><li>Ler a tabela por critérios; reconhecer a vantagem do Lambda (batch nativo).</li>
+<li><strong>Decisão:</strong> o stream durável do Kafka unifica os caminhos e elimina a dupla implementação (Fragkoulis 2020) → <strong>Kappa</strong>, com o Lakehouse cobrindo o lote pesado.</li></ul></div>
+
+<div class="sn a"><div class="sn-head"><span class="sn-num">14</span><span class="sn-title">Lakehouse / Delta Lake</span><span class="sn-time">≈2 min</span></div>
+<ul><li>O object store é key-value sem atomicidade cross-key → o <strong>log de transações do Delta</strong> traz ACID, data skipping e time travel (Armbrust 2020).</li>
+<li>Medallion Bronze → Silver → <strong>Gold (o DW estendido)</strong>. Motor: Spark SQL + Catalyst (Armbrust 2015). É a resposta ao "ACID entre batch e streaming".</li></ul></div>
+
+<div class="sn a"><div class="sn-head"><span class="sn-num">15</span><span class="sn-title">Processamento: três regimes</span><span class="sn-time">≈2 min 30</span></div>
+<ul><li><strong>Não é redundância — é adequação de SLA:</strong><ul>
+<li><strong>Spark batch</strong> — RDD/linhagem, reuso em memória até 20× (Zaharia 2012); Markov; generaliza o MapReduce.</li>
+<li><strong>Spark Streaming</strong> — hot path, micro-batches com <strong>exactly-once</strong> idempotente (Zaharia 2013), evita cobrar em dobro.</li>
+<li><strong>Flink</strong> — event-time + watermarks + ABS/Chandy-Lamport (Carbone 2015); rotas e score.</li></ul></li></ul></div>
+
+<h2 class="sec"><span class="tag b">Parte B</span> Armazenamento, interface e IA &nbsp;<span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted)">slides 16–19</span></h2>
+
+<div class="sn b"><div class="sn-head"><span class="sn-num">16</span><span class="sn-title">Persistência poliglota</span><span class="sn-time">≈2 min 15</span></div>
+<ul><li>Raiz: <strong>CAP</strong> (Gilbert &amp; Lynch 2002) — segmentar e dar a cada subserviço seu trade-off (Cattell 2011).</li>
+<li>Cassandra (AP, telemetria, LSM + clustering por ts materializa a ordem — Lakshman 2009 / DeCandia 2007) · MongoDB (cadastrais/dossiês) · Redis (cache sub-ms) · PostgreSQL/Delta (CP, cobrança/Gold).</li>
+<li>Frase: <em>"telemetria é AP, cobrança é CP — o mesmo trade-off carrinho vs. checkout do Dynamo."</em></li></ul></div>
+
+<div class="sn b"><div class="sn-head"><span class="sn-num">17</span><span class="sn-title">Dashboard / Streamlit</span><span class="sn-time">≈2 min</span></div>
+<ul><li>OLAP sobre a <strong>Gold</strong>, nunca sobre os OLTP (Chaudhuri &amp; Dayal 1997); ao vivo via Redis pub/sub.</li>
+<li>Cubo frota × tempo × pátio × empresa (Gray 1997). Percorrer os painéis (frota, financeiro, emergências, viagens, oficina) + <strong>trânsito, meteorologia e eventos/alertas da cidade</strong> — mapeiam 1:1 com o enunciado.</li>
+<li>Frisar: o mesmo tempo real deixa a <strong>reserva mais objetiva</strong> (disponibilidade e ETA reais no app) — a "melhoria da reserva" que o enunciado pede.</li></ul></div>
+
+<div class="sn b br"><div class="sn-head"><span class="sn-num">18</span><span class="sn-title">Cobrança e emergências</span><span class="sn-note">ponte A↔B</span><span class="sn-time">≈2 min 15</span></div>
+<ul><li><strong>Cobrança:</strong> gatilho na devolução → valor final = base ± ajustes (km, tempo, consumo, infrações, score do Flink). Exactly-once evita duplicidade; auditável por time travel. <strong>Valor: ↑ receita, ↓ contestações.</strong></li>
+<li><strong>Emergências:</strong> borda detecta → <code>alerts.critical</code> → Spark orquestra → resposta (guincho, seguradora, substituto) + <strong>dossiê citável</strong>. <strong>Valor: ↓ tempo de resposta e de regulação.</strong></li></ul></div>
+
+<div class="sn b"><div class="sn-head"><span class="sn-num">19</span><span class="sn-title">Concierge de IA</span><span class="sn-time">≈2 min</span></div>
+<ul><li>Backend de voz: PLN + agente + <strong>RAG</strong> sobre <strong>banco vetorial</strong> (Lewis 2020; Guo 2022) — sem chave de LLM paga.</li>
+<li>RAG dá <strong>proveniência auditável</strong> e reduz alucinação — a mesma base sustenta os dossiês de emergência. Usar o exemplo do almoço + exposição de arte. Mencionar privacidade (consentimento, PII, wake-word).</li></ul></div>
+
+<h2 class="sec"><span class="tag c">Comum</span> Casos de uso e fechamento &nbsp;<span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted)">slides 20–25</span></h2>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">20</span><span class="sn-title">Casos de uso reais</span><span class="sn-note">a modelagem em ação</span><span class="sn-time">≈2 min</span></div>
+<ul><li>Três cenários: <strong>Colisão em túnel</strong> (crítico/resposta rápida), <strong>Devolução com condução agressiva</strong> (usual/financeiro), <strong>Pico no aeroporto + pane + concierge</strong> (analítico/IA).</li>
+<li>Para cada um: diga o cenário, o fluxo pelo pipeline e <strong>quais entidades "acendem"</strong>. Enfatize que três delas <strong>justificam a extensão do modelo</strong> (Dim_Tempo_Detalhe, Fato_Cobranca, Fato_Manutencao/Dim_Sensor).</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">21</span><span class="sn-title">Rastreabilidade das entidades</span><span class="sn-note">impressiona o professor</span><span class="sn-time">≈1 min 30</span></div>
+<ul><li>A matriz mostra <strong>onde cada fato/dimensão aparece</strong> nos três casos (crítico/usual/analítico) e marca com ✚ o que é da extensão.</li>
+<li>Frase: <em>"conseguimos apontar cada entidade modelada numa situação real — usual ou crítica."</em> Convide o professor a escolher uma entidade da coluna e você explica em qual caso ela vive.</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">22</span><span class="sn-title">Custos &amp; prova de conceito</span><span class="sn-time">≈1 min 15</span></div>
+<ul><li>Três alavancas: banda (borda), compute (autoscaling + spot), storage (tiering + TTL).</li>
+<li><strong>Sistema executável:</strong> docker-compose validado, <strong>115 testes unitários</strong> verdes, DDL do DW estendido validado. Free tiers para experimentar.</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">23</span><span class="sn-title">Alternativas descartadas</span><span class="sn-time">≈1 min</span></div>
+<ul><li>Responde ao critério "por que NÃO outras soluções". Uma frase por linha (só DW, só batch, Lambda, banco único, vídeo bruto, Hadoop MapReduce clássico).</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">24</span><span class="sn-title">Referências</span><span class="sn-time">≈45 s</span></div>
+<ul><li>Sinalizar que <strong>toda decisão tem lastro</strong>: 21 referências primárias mapeadas à ementa. Não ler tudo — apontar que a bibliografia está no repositório e na proposta.</li></ul></div>
+
+<div class="sn"><div class="sn-head"><span class="sn-num">25</span><span class="sn-title">Conclusões</span><span class="sn-time">≈1 min</span></div>
+<ul><li>Recapitular: fundamentada → arquitetura (borda/Kafka/Kappa+Delta/3 regimes/poliglota) → <strong>DW estendido (Gold)</strong> → serving+IA → <strong>valor ao cliente</strong> → executável.</li>
+<li>Fechar: arquitetura resiliente, escalável, em tempo real, teoricamente fundamentada e que move os indicadores de negócio. Abrir para perguntas.</li></ul></div>
+
+<h2 class="sec"><span class="tag c">Q&amp;A</span> Banco de perguntas prováveis do professor</h2>
+<p class="sub" style="margin-bottom:0.6em">Respostas curtas e fundamentadas — treine cobrir a resposta e responder de cabeça.</p>
+
+<div class="qa">
+  <div class="grp">Arquitetura &amp; streaming</div>
+  <div class="item"><div class="q">Por que Kappa e não Lambda?</div><div class="a">Problema é streaming-first; Lambda mantém dois códigos e arrisca divergência (Fragkoulis 2020). O stream durável do Kafka unifica; o lote pesado é coberto pelo Lakehouse (Delta), então não perdemos reprocessamento.</div></div>
+  <div class="item"><div class="q">Como garantem a ordenação estrita por veículo e timestamp?</div><div class="a">Partição do Kafka por <code>vehicle_id</code> (ordem estrita na partição — Kreps 2011) + processamento por <strong>event-time com watermarks</strong> no Flink (Carbone 2015); o timestamp é carimbado na borda. Mesmo objetivo da consistência externa do Spanner/TrueTime (Corbett 2012).</div></div>
+  <div class="item"><div class="q">Exactly-once é real?</div><div class="a">Na ingestão, <strong>at-least-once</strong> + chave de idempotência (<code>vehicle_id+timestamp</code>) para dedup end-to-end; <strong>exactly-once</strong> de fato nas etapas internas (D-Streams idempotentes — Zaharia 2013; ABS no Flink — Carbone 2015).</div></div>
+  <div class="item"><div class="q">Como garantem "sem perda de pacotes"?</div><div class="a">Kafka é log durável com replay por offset; a borda faz store-and-forward na desconexão; e o modelo <em>always-writeable</em> do Dynamo (DeCandia 2007) inspira a camada de telemetria (Cassandra).</div></div>
+  <div class="item"><div class="q">Diferença entre os três motores?</div><div class="a">Vazão histórica (Spark batch), orquestração near-real-time da emergência (Spark Streaming, segundos), latência mínima com janelas/estado (Flink, ms). A reação sub-segundo à colisão é <strong>embarcada</strong>, não na nuvem.</div></div>
+
+  <div class="grp">Data Warehouse &amp; Lakehouse (Parte II)</div>
+  <div class="item"><div class="q">ETL ou ELT?</div><div class="a"><strong>ELT</strong>: carregamos o bruto no Lakehouse (Bronze) e transformamos com o poder do cluster (Silver→Gold). É a modernização que a ementa pede sobre o ETL clássico.</div></div>
+  <div class="item"><div class="q">Como o DW da Aval. 02 se conecta?</div><div class="a">Vira a <strong>camada Gold</strong> do Lakehouse (Armbrust 2021), estendida com 4 novos fatos e novas dimensões carregados por ELT do Silver — continuidade, não descarte.</div></div>
+  <div class="item"><div class="q">O que é o Lakehouse e por que Delta?</div><div class="a">Unifica DW e data lake numa arquitetura só, evitando <em>staleness</em> e TCO da arquitetura de dois níveis; o Delta traz ACID/time travel ao object store via log de transações (Armbrust 2020, 2021).</div></div>
+  <div class="item"><div class="q">Onde aparece o OLAP/CUBE?</div><div class="a">No dashboard: roll-up frota→empresa→pátio→veículo e o cubo N-dimensional com <code>ALL</code> (Gray 1997), sempre sobre a Gold, nunca sobre o OLTP (Chaudhuri &amp; Dayal 1997).</div></div>
+  <div class="item"><div class="q">Orquestração dos pipelines?</div><div class="a">No perfil <code>full</code>, um DAG no <strong>Airflow</strong> orquestra o ELT Silver→Gold (a ementa cita Airflow/Prefect/Dagster).</div></div>
+
+  <div class="grp">NoSQL, NewSQL &amp; vetoriais (Parte IV)</div>
+  <div class="item"><div class="q">Por que Cassandra e não só MongoDB?</div><div class="a">Cassandra é <em>write-optimized</em> (LSM) e faz <em>clustering</em> por timestamp dentro da partição <code>vehicle_id</code>, materializando a ordem (Lakshman 2009) — ideal para telemetria de altíssima escrita; Mongo é para cadastrais/dossiês semiestruturados.</div></div>
+  <div class="item"><div class="q">Onde cada banco cai no CAP?</div><div class="a">Telemetria = <strong>AP</strong> (disponível, consistência eventual); cobrança/dossiê = <strong>CP</strong> (consistência forte, PostgreSQL/Delta). Segmentamos por trade-off (Gilbert &amp; Lynch 2002; Cattell 2011).</div></div>
+  <div class="item"><div class="q">O que é NewSQL e onde entra?</div><div class="a">SQL + ACID que escala horizontalmente (Spanner — Corbett 2012). Aqui o PostgreSQL é o polo consistente da cobrança e da modelagem dimensional; snapshot no passado espelha o time travel do Delta.</div></div>
+  <div class="item"><div class="q">Banco vetorial — qual e por quê?</div><div class="a">Para a memória do concierge (embeddings de POIs), busca por similaridade (Manu — Guo 2022; pgvector/Milvus/Weaviate na ementa). Liga a Parte III (RAG) à Parte IV.</div></div>
+
+  <div class="grp">IA (Parte III)</div>
+  <div class="item"><div class="q">O que é RAG e por que usar?</div><div class="a">Combina memória paramétrica (gerador) e não-paramétrica (índice denso); reduz alucinação, dá <strong>proveniência</strong> e permite trocar o índice sem re-treino (Lewis 2020). Fundamenta o concierge (sem LLM paga) e os dossiês citáveis.</div></div>
+  <div class="item"><div class="q">Agentes de IA / MLOps?</div><div class="a">No perfil <code>full</code>: pipeline MLOps (sklearn + MLflow) treina o score de condução/manutenção preditiva; o agente do concierge usa function calling. Grafo (Neo4j) para roteirização/raciocínio.</div></div>
+
+  <div class="grp">Fundamentos &amp; validação</div>
+  <div class="item"><div class="q">MapReduce ainda importa?</div><div class="a">Como <strong>paradigma</strong>: restringir a map/reduce é o que dá paralelismo e tolerância por re-execução (Dean &amp; Ghemawat 2004). O Spark o <strong>generaliza</strong> (DAG, in-memory, linhagem — Zaharia 2012); por isso descartamos o Hadoop MapReduce clássico (I/O em disco).</div></div>
+  <div class="item"><div class="q">Como validaram sem rodar tudo?</div><div class="a"><code>docker compose config</code> valida os perfis core e full; <strong>115 testes unitários</strong> (combiner, cobrança exactly-once, Markov=1.0, SCD-2, RAG); o DDL 01+06 do DW roda limpo num PostgreSQL real. O <code>docker compose up</code> completo roda na máquina de 16 GB.</div></div>
+  <div class="item"><div class="q">Custos de nuvem?</div><div class="a">Maior custo é banda/egress → filtramos na borda; compute com autoscaling + spot; storage com tiering (quente Redis/Cassandra vs. frio Delta) e TTL.</div></div>
+  <div class="item"><div class="q">Privacidade / LGPD?</div><div class="a">Consentimento para agenda, tratamento de PII, wake-word on-device no concierge; no <code>full</code>, controles de governança/LGPD e time travel do Delta para auditoria.</div></div>
+
+  <div class="grp">Robustez &amp; modelagem</div>
+  <div class="item"><div class="q">Como o sistema lida com casos limítrofes?</div><div class="a">Quatro garantias combinadas: <strong>durabilidade</strong> (store-and-forward na borda + log Kafka/Delta → zero perda em túnel/queda), <strong>ordem</strong> (partição por veículo + watermarks reordenam atrasados; eventos muito tardios reconciliam no lote), <strong>idempotência</strong> (dedup por chave; cobrança exactly-once — nunca em dobro) e <strong>reconciliação</strong> (time travel para evento tardio pós-fatura). Sob partição de rede: telemetria AP segue aceitando escrita; cobrança/dossiê CP aguardam consistência. Sensor/firmware inválido → Schema Registry + dead-letter.</div></div>
+  <div class="item"><div class="q">O DW da Aval. 02 não tinha finanças?</div><div class="a">Tinha no conceito: o <code>Pagamento</code> (valor) existia no OLTP da Parte I e foi esboçado como Fato_Pagamento. O esquema estrela entregue consolidou 3 fatos de contagem/duração; a <strong>Fato_Cobranca</strong> traz esse pagamento para a Gold e o enriquece com km/consumo/infração/score — <strong>continuidade</strong>, não lacuna.</div></div>
+</div>
