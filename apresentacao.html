@@ -15,9 +15,9 @@ html,body{ height:100%; overflow-x:hidden; }
   --title:  clamp(2rem, 4.4vw, 3.5rem);
   --h2:     clamp(1.3rem, 2.8vw, 2.25rem);
   --h3:     clamp(1rem, 1.8vw, 1.42rem);
-  --body:   clamp(0.9rem, 1.3vw, 1.12rem);
-  --small:  clamp(0.84rem, 1.12vw, 1.02rem);
-  --tiny:   clamp(0.74rem, 0.94vw, 0.9rem);
+  --body:   clamp(1rem, 1.48vw, 1.24rem);
+  --small:  clamp(0.95rem, 1.32vw, 1.16rem);
+  --tiny:   clamp(0.8rem, 1.02vw, 0.96rem);
   --gap:    clamp(0.5rem, 1.5vh, 1.2rem);
 
   --paper:#f5f3ec; --paper-2:#eeebe0; --card:#ffffff;
@@ -238,13 +238,13 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
   <div class="body">
     <h2 class="reveal d1">Da locação manual à frota autônoma conectada</h2>
     <div class="rule-h reveal d1"></div>
-    <p class="reveal d1 lead">Um consórcio de seis locadoras automatiza a operação: pelo aplicativo, o cliente reserva o veículo e indica onde recebê-lo; o veículo <strong>sai sozinho do pátio, navega no trânsito e estaciona no ponto indicado</strong>; ao fim, retorna para higienização e manutenção. Cada veículo é um <strong>sensor sobre rodas</strong> que gera fluxo contínuo de dados.</p>
+    <p class="reveal d1 lead">O <strong>veículo autônomo</strong> sai sozinho do pátio, atende o cliente e volta para higienização. Cada veículo é um <strong>sensor sobre rodas</strong>.</p>
     <div class="reveal d2 grid g3" style="margin-top:0.2rem">
-      <div class="card lb blue"><span class="tag">Fonte de dados</span><h3>Veículo instrumentado</h3><p>Sensores internos (motor, chassi) e externos (telemetria inercial, câmeras 360°, impacto) + computador de bordo (Edge).</p></div>
-      <div class="card lb"><span class="tag">Escala</span><h3>Frota simultânea</h3><p>Milhares de veículos transmitindo ao mesmo tempo, sob banda móvel cara e finita.</p></div>
-      <div class="card lb plum"><span class="tag">Ambição</span><h3>Autonomia e IA</h3><p>Reserva sem balcão, cobrança dinâmica pós-uso, resposta a sinistros e concierge por voz.</p></div>
+      <div class="card lb blue"><span class="tag">Fonte de dados</span><h3>Veículo instrumentado</h3><p>Sensores + câmeras 360° + computador de bordo <em>(Edge)</em>.</p></div>
+      <div class="card lb"><span class="tag">Escala</span><h3>Frota simultânea</h3><p>Milhares de veículos ao vivo, sob banda cara e finita.</p></div>
+      <div class="card lb plum"><span class="tag">Ambição</span><h3>Autonomia e IA</h3><p>Reserva sem balcão, cobrança dinâmica, sinistros, concierge.</p></div>
     </div>
-    <div class="reveal d3 callout"><span class="k">Problema central</span><p>O Data Warehouse sozinho não sustenta o novo modelo: é preciso uma solução de <strong>Big Data</strong> com ingestão massiva, processamento em tempo real e persistência poliglota.</p></div>
+    <div class="reveal d3 callout"><span class="k">Problema central</span><p>O DW sozinho não basta — é preciso <strong>Big Data</strong>: ingestão massiva, tempo real, persistência poliglota.</p></div>
   </div>
   <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>03 / 25</span></div>
 </section>
@@ -256,14 +256,14 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
     <h2 class="reveal d1">O que o consórcio ganha com a solução</h2>
     <div class="rule-h reveal d1"></div>
     <div class="reveal d2 grid g3" style="margin-top:0.1rem">
-      <div class="card lb teal"><span class="tag">Utilização da frota</span><h3>Menos veículos ociosos</h3><p>Redistribuição inteligente (Markov + rotas em tempo real) antecipa a demanda por pátio e maximiza o giro dos ativos.</p><span class="kpi">↑ taxa de utilização</span></div>
-      <div class="card lb blue"><span class="tag">Receita</span><h3>Cobrança justa e dinâmica</h3><p>Acréscimos por km, consumo e infrações — receita que hoje se perde — com transparência que reduz contestações.</p><span class="kpi blue">↑ receita / locação</span></div>
-      <div class="card lb"><span class="tag">Custo operacional</span><h3>Sem balcão, sem logística de entrega</h3><p>Reserva pelo app e veículo autônomo cortam o custo de atendimento e de deslocar equipes para entregar/buscar.</p><span class="kpi">↓ custo por locação</span></div>
-      <div class="card lb amber"><span class="tag">Sinistros</span><h3>Resposta e regulação mais rápidas</h3><p>Detecção na borda + dossiê automático aceleram o socorro e o processo com seguradora/órgãos.</p><span class="kpi amber">↓ tempo de resposta</span></div>
-      <div class="card lb red"><span class="tag">Disponibilidade</span><h3>Manutenção preditiva</h3><p>Antecipar panes a partir da telemetria reduz o veículo parado e a quebra em operação.</p><span class="kpi red">↓ downtime</span></div>
-      <div class="card lb plum"><span class="tag">Experiência</span><h3>Concierge por IA</h3><p>Roteiro personalizado por voz diferencia o serviço e fideliza o cliente premium.</p><span class="kpi plum">↑ satisfação / NPS</span></div>
+      <div class="card lb teal"><span class="tag">Utilização da frota</span><h3>Menos veículos ociosos</h3><p>Markov + rotas antecipam a demanda e maximizam o giro.</p><span class="kpi">↑ utilização</span></div>
+      <div class="card lb blue"><span class="tag">Receita</span><h3>Cobrança justa e dinâmica</h3><p>Acréscimos por km, consumo e infrações, com transparência.</p><span class="kpi blue">↑ receita / locação</span></div>
+      <div class="card lb"><span class="tag">Custo operacional</span><h3>Sem balcão nem entrega</h3><p>App + veículo autônomo cortam atendimento e logística.</p><span class="kpi">↓ custo / locação</span></div>
+      <div class="card lb amber"><span class="tag">Sinistros</span><h3>Resposta mais rápida</h3><p>Detecção na borda + dossiê automático aceleram o socorro.</p><span class="kpi amber">↓ tempo de resposta</span></div>
+      <div class="card lb red"><span class="tag">Disponibilidade</span><h3>Manutenção preditiva</h3><p>Antecipar panes reduz o veículo parado.</p><span class="kpi red">↓ downtime</span></div>
+      <div class="card lb plum"><span class="tag">Experiência</span><h3>Concierge por IA</h3><p>Roteiro por voz diferencia e fideliza.</p><span class="kpi plum">↑ satisfação / NPS</span></div>
     </div>
-    <div class="reveal d3 callout teal"><span class="k">Fio condutor</span><p>Cada decisão técnica a seguir existe para mover um destes <strong>indicadores de negócio</strong> — a arquitetura é meio, o valor é o fim.</p></div>
+    <div class="reveal d3 callout teal"><span class="k">Fio condutor</span><p>Cada decisão técnica move um destes <strong>indicadores</strong> — a arquitetura é meio; o valor é o fim.</p></div>
   </div>
   <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>04 / 25</span></div>
 </section>
@@ -275,26 +275,26 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
     <h2 class="reveal d1">O que a solução precisa entregar</h2>
     <div class="rule-h reveal d1"></div>
     <div class="grid g2" style="margin-top:0.1rem">
-      <div class="reveal d2 card lb blue"><span class="tag">Requisitos funcionais</span>
+      <div class="reveal d2 card lb blue"><span class="tag">Funcionais</span>
         <ul class="bl" style="margin-top:0.4rem">
-          <li><strong>Acompanhamento</strong> (dashboard): frota, emergências e financeiro</li>
-          <li><strong>Reserva</strong> mais objetiva, simples e eficiente</li>
-          <li><strong>Cobrança automática</strong> pós-devolução, com ajustes por uso</li>
-          <li><strong>Apoio a emergências</strong> e dossiê para regulação</li>
-          <li><em>Extra:</em> <strong>concierge de viagem por IA</strong> (voz)</li>
+          <li><strong>Dashboard</strong>: frota, emergências, financeiro</li>
+          <li><strong>Reserva</strong> mais simples e eficiente</li>
+          <li><strong>Cobrança automática</strong> por uso, na devolução</li>
+          <li><strong>Apoio a emergências</strong> + dossiê de regulação</li>
+          <li><em>Extra:</em> <strong>concierge por voz</strong> (IA)</li>
         </ul>
       </div>
-      <div class="reveal d3 card lb amber"><span class="tag">Requisitos não funcionais (5 desafios)</span>
+      <div class="reveal d3 card lb amber"><span class="tag">Não funcionais · 5 desafios</span>
         <ul class="bl" style="margin-top:0.4rem">
-          <li><strong>Banda finita</strong> — inviável trafegar vídeo bruto contínuo</li>
-          <li><strong>Alta concorrência</strong> — sem perda de pacotes nem gargalo</li>
+          <li><strong>Banda finita</strong> — sem vídeo bruto contínuo</li>
+          <li><strong>Alta concorrência</strong> — sem perda de pacotes</li>
           <li><strong>Ordenação estrita</strong> por veículo e <span class="mono">timestamp</span></li>
-          <li><strong>Resiliência</strong> — tolerância a falhas e reprocessamento</li>
-          <li><strong>Consistência ACID</strong> entre lote e streaming</li>
+          <li><strong>Resiliência</strong> — falhas e reprocessamento</li>
+          <li><strong>ACID</strong> entre lote e streaming</li>
         </ul>
       </div>
     </div>
-    <p class="reveal d4 faint" style="font-size:var(--small)">Estes requisitos não funcionais orientam todas as decisões de arquitetura apresentadas a seguir.</p>
+    <p class="reveal d4 faint" style="font-size:var(--small)">Estes 5 desafios orientam todas as decisões a seguir.</p>
   </div>
   <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>05 / 25</span></div>
 </section>
@@ -306,14 +306,14 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
     <h2 class="reveal d1">Como a proposta foi construída</h2>
     <div class="rule-h reveal d1"></div>
     <div class="reveal d2 steps">
-      <div class="step"><span class="num">1</span><h3>Levantamento de requisitos</h3><p>Requisitos funcionais e não funcionais extraídos do contexto e do enunciado.</p></div>
-      <div class="step"><span class="num">2</span><h3>Revisão bibliográfica</h3><p>Leitura de <strong>21 referências primárias</strong> (papers seminais) mapeadas às 4 partes da ementa.</p></div>
-      <div class="step"><span class="num">3</span><h3>Decisão fundamentada</h3><p>Cada escolha por <em>trade-offs</em> explícitos, ancorada na literatura.</p></div>
-      <div class="step"><span class="num">4</span><h3>Seleção de componentes</h3><p>Tecnologia escolhida pelo padrão de acesso (persistência poliglota).</p></div>
-      <div class="step"><span class="num">5</span><h3>Prova de conceito</h3><p>Sistema executável (docker-compose) validado; DDL do DW estendido testado.</p></div>
-      <div class="step"><span class="num">6</span><h3>Continuidade com o DW</h3><p>Extensão do modelo dimensional da Avaliação 02 — sem retrabalho.</p></div>
+      <div class="step"><span class="num">1</span><h3>Requisitos</h3><p>Do contexto e do enunciado.</p></div>
+      <div class="step"><span class="num">2</span><h3>Revisão bibliográfica</h3><p><strong>21 referências primárias</strong>, mapeadas à ementa.</p></div>
+      <div class="step"><span class="num">3</span><h3>Decisão fundamentada</h3><p><em>Trade-offs</em> explícitos, com lastro teórico.</p></div>
+      <div class="step"><span class="num">4</span><h3>Seleção de componentes</h3><p>Pelo padrão de acesso (poliglota).</p></div>
+      <div class="step"><span class="num">5</span><h3>Prova de conceito</h3><p><span class="mono">docker-compose</span> validado; DDL testado.</p></div>
+      <div class="step"><span class="num">6</span><h3>Continuidade com o DW</h3><p>Estende a Aval. 02 — sem retrabalho.</p></div>
     </div>
-    <p class="reveal d3 faint" style="font-size:var(--small)">Critério de decisão em cada camada: adequação ao SLA · custo · resiliência · complexidade — sempre com lastro teórico citado.</p>
+    <p class="reveal d3 faint" style="font-size:var(--small)">Critério em cada camada: SLA · custo · resiliência · complexidade — com lastro citado.</p>
   </div>
   <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>06 / 25</span></div>
 </section>
@@ -324,17 +324,17 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
   <div class="body">
     <h2 class="reveal d1">Ombros de gigantes: as bases do projeto</h2>
     <div class="rule-h reveal d1"></div>
-    <p class="reveal d1 lead">Cada camada é ancorada na literatura fundadora de VLDB, DW e Big Data — organizada nas quatro partes da ementa.</p>
+    <p class="reveal d1 lead">Cada camada tem lastro na literatura — pelas 4 partes da ementa.</p>
     <div class="reveal d2">
       <table>
-        <thead><tr><th>Parte</th><th>Princípio fundador</th><th>Referência</th><th>Onde aplicamos</th></tr></thead>
+        <thead><tr><th>Parte</th><th>Princípio</th><th>Referência</th><th>Onde aplicamos</th></tr></thead>
         <tbody>
-          <tr><td><strong>I</strong> · Distribuído / VLDB</td><td>Falha é a norma; mover a computação para perto do dado (localidade)</td><td class="cite">Ghemawat 2003; Dean & Ghemawat 2004</td><td>Réplicas, Edge, escalonamento do Spark</td></tr>
-          <tr><td><strong>I</strong> · Tempo distribuído</td><td>Ordem e consistência externa (TrueTime)</td><td class="cite">Corbett 2012</td><td>Ordenação estrita por veículo+timestamp</td></tr>
-          <tr><td><strong>II</strong> · DW / OLAP / Lakehouse</td><td>OLAP separado do OLTP; operador CUBE; Lakehouse unifica</td><td class="cite">Chaudhuri & Dayal 1997; Gray 1997; Armbrust 2021</td><td>DW vira camada Gold; cubo executivo</td></tr>
-          <tr><td><strong>III</strong> · Streaming</td><td>Log particionado; watermarks; exactly-once</td><td class="cite">Kreps 2011; Carbone 2015; Zaharia 2013</td><td>Kafka, Flink, Spark Streaming</td></tr>
-          <tr><td><strong>III</strong> · Engenharia de IA</td><td>Geração ancorada em conhecimento recuperável (RAG)</td><td class="cite">Lewis 2020; Guo 2022</td><td>Concierge e dossiês citáveis</td></tr>
-          <tr><td><strong>IV</strong> · NoSQL / CAP</td><td>CAP; BASE vs ACID; wide-column LSM</td><td class="cite">Gilbert & Lynch 2002; DeCandia 2007; Lakshman 2009</td><td>Persistência poliglota</td></tr>
+          <tr><td><strong>I</strong> · VLDB</td><td>Falha é a norma; localidade</td><td class="cite">Ghemawat 2003; Dean 2004</td><td>Réplicas, Edge, Spark</td></tr>
+          <tr><td><strong>I</strong> · Tempo</td><td>Ordem / consistência externa</td><td class="cite">Corbett 2012</td><td>Ordenação por veículo+ts</td></tr>
+          <tr><td><strong>II</strong> · DW / Lakehouse</td><td>OLAP ≠ OLTP; CUBE; Lakehouse</td><td class="cite">Chaudhuri 1997; Gray 1997; Armbrust 2021</td><td>DW vira camada Gold</td></tr>
+          <tr><td><strong>III</strong> · Streaming</td><td>Log particionado; watermarks</td><td class="cite">Kreps 2011; Carbone 2015; Zaharia 2013</td><td>Kafka, Flink, Spark</td></tr>
+          <tr><td><strong>III</strong> · IA</td><td>Geração ancorada (RAG)</td><td class="cite">Lewis 2020; Guo 2022</td><td>Concierge e dossiês</td></tr>
+          <tr><td><strong>IV</strong> · NoSQL / CAP</td><td>CAP; BASE vs ACID; LSM</td><td class="cite">Gilbert 2002; DeCandia 2007; Lakshman 2009</td><td>Persistência poliglota</td></tr>
         </tbody>
       </table>
     </div>
@@ -353,18 +353,18 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
         <ul class="bl" style="margin-top:0.3rem">
           <li>Fatos: <strong>Reserva, Locação, Movimentação</strong> (fact constellation)</li>
           <li>5 dimensões conformadas; Pátio <em>role-playing</em></li>
-          <li>4 fontes OLTP → ELT; previsão de pátios via <strong>Markov</strong></li>
+          <li>4 fontes OLTP; previsão de pátios via <strong>Markov</strong></li>
         </ul>
       </div>
       <div class="reveal d3 card lb blue"><span class="tag">Avaliação 03 · o DW vira a camada Gold</span><h3>Extensão dimensional</h3>
         <ul class="bl" style="margin-top:0.3rem">
           <li>Novos fatos: <strong>Telemetria, Cobrança, Sinistro, Manutenção</strong></li>
-          <li>Novas dims: Tempo_Detalhe (min), Sensor (SCD2), TipoEvento, FaixaCondução</li>
-          <li>Carregados por <strong>ELT do Silver</strong> (Flink/Spark) no Lakehouse</li>
+          <li>Novas dims: Tempo_Detalhe, Sensor (SCD2), TipoEvento, FaixaCondução</li>
+          <li>Carregados por <strong>ELT do Silver</strong> (Flink/Spark)</li>
         </ul>
       </div>
     </div>
-    <div class="reveal d4 callout teal"><span class="k">Estratégia — Lakehouse <span class="cite">[Armbrust 2021]</span></span><p>Não substituir, e sim <strong>envolver</strong> o DW: o esquema estrela passa a ser a camada <strong>Gold</strong> sobre Delta/MinIO, alimentada pelo pipeline de streaming — evita a dicotomia lake vs. warehouse.</p></div>
+    <div class="reveal d4 callout teal"><span class="k">Estratégia — Lakehouse <span class="cite">[Armbrust 2021]</span></span><p>Não substituir, e sim <strong>envolver</strong>: o esquema estrela vira a camada <strong>Gold</strong> do Lakehouse, alimentada pelo streaming.</p></div>
   </div>
   <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>08 / 25</span></div>
 </section>
@@ -404,7 +404,7 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
   <div class="body">
     <h2 class="reveal d1">Filtrar na borda: só o relevante trafega pela rede</h2>
     <div class="rule-h reveal d1"></div>
-    <p class="reveal d1 lead">Fundamento: <strong>localidade</strong> — mover a computação para perto do dado poupa a banda escassa; a pré-agregação no veículo é o <em>combiner</em> do MapReduce aplicado à borda. <span class="cite">[Dean & Ghemawat 2004]</span></p>
+    <p class="reveal d1 lead">Fundamento: <strong>localidade</strong> — a pré-agregação no veículo é o <em>combiner</em> do MapReduce na borda, poupando banda. <span class="cite">[Dean & Ghemawat 2004]</span></p>
     <div class="grid g2" style="margin-top:0.1rem">
       <div class="reveal d2 card lb blue"><span class="tag">Fluxo de rotina · warm path</span><h3>Telemetria agregada</h3>
         <ul class="bl" style="margin-top:0.3rem">
@@ -421,7 +421,7 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
         </ul>
       </div>
     </div>
-    <div class="reveal d4 callout"><span class="k">Valor</span><p>Corta o <strong>maior custo recorrente</strong> (banda/egress) e viabiliza a resposta que não pode esperar a nuvem. O vídeo bruto permanece no veículo.</p></div>
+    <div class="reveal d4 callout"><span class="k">Valor</span><p>Corta o <strong>maior custo</strong> (banda) e a resposta não espera a nuvem. O vídeo bruto fica no veículo.</p></div>
   </div>
   <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>10 / 25</span></div>
 </section>
@@ -432,7 +432,7 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
   <div class="body">
     <h2 class="reveal d1">Apache Kafka como log distribuído particionado</h2>
     <div class="rule-h reveal d1"></div>
-    <p class="reveal d1 lead">Log particionado com consumo <em>pull</em> por offset e retenção temporal — buffer durável sob banda finita, com <strong>ordem estrita dentro da partição</strong>. <span class="cite">[Kreps 2011]</span></p>
+    <p class="reveal d1 lead">Log particionado, consumo <em>pull</em> por offset, retenção — buffer durável com <strong>ordem estrita na partição</strong>. <span class="cite">[Kreps 2011]</span></p>
     <div class="grid g2" style="margin-top:0.1rem">
       <div class="reveal d2 card lb blue"><span class="tag">Tópicos isolados</span><h3>Separar telemetria de alarmes</h3>
         <div class="pills" style="margin-top:0.4rem">
@@ -443,10 +443,10 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
       </div>
       <div class="reveal d3 card lb teal"><span class="tag">Garantias</span><h3>Ordem e resiliência</h3>
         <ul class="bl" style="margin-top:0.3rem">
-          <li>Partição por <span class="mono">vehicle_id</span> → ordem por veículo, sem coordenação global</li>
+          <li>Partição por <span class="mono">vehicle_id</span> → ordem sem coordenação global</li>
           <li>Replicação + ISR → tolerância a falhas <span class="cite">[Ghemawat 2003]</span></li>
-          <li>At-least-once + dedup por chave (aplicação)</li>
-          <li>Avro + Schema Registry → contrato borda↔consumidor</li>
+          <li>At-least-once + dedup por chave</li>
+          <li>Avro + Schema Registry → contrato de esquema</li>
         </ul>
       </div>
     </div>
@@ -460,13 +460,13 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
   <div class="body">
     <h2 class="reveal d1">Rede oscilante e mensagens fora de ordem</h2>
     <div class="rule-h reveal d1"></div>
-    <p class="reveal d1 lead">Zonas de sombra (túneis, subsolos) entregam dados atrasados e fora de ordem. Solução em três camadas — o rigor de ordem que o Spanner obtém com TrueTime, o Flink emula com <em>watermarks</em>. <span class="cite">[Corbett 2012; Carbone 2015]</span></p>
+    <p class="reveal d1 lead">Túneis e zonas de sombra entregam dados fora de ordem. Três camadas resolvem — o que o Spanner faz com TrueTime, o Flink faz com <em>watermarks</em>. <span class="cite">[Corbett 2012; Carbone 2015]</span></p>
     <div class="grid g3" style="margin-top:0.1rem">
-      <div class="reveal d2 card lb blue"><span class="tag">Borda</span><h3>Compressão + buffer</h3><p>Avro reduz o volume; <em>store-and-forward</em> guarda na desconexão e reenvia sem perda.</p></div>
-      <div class="reveal d3 card"><span class="tag">Kafka</span><h3>Ordenação por chave</h3><p>Partição por <span class="mono">vehicle_id</span> mantém a ordem por veículo mesmo com produtores concorrentes.</p></div>
-      <div class="reveal d4 card lb teal"><span class="tag">Flink</span><h3>Event-time + watermarks</h3><p>Processa pelo <span class="mono">timestamp</span> do veículo; <em>watermarks</em> reordenam pacotes atrasados. <span class="cite">[Fragkoulis 2020]</span></p></div>
+      <div class="reveal d2 card lb blue"><span class="tag">Borda</span><h3>Compressão + buffer</h3><p>Avro comprime; <em>store-and-forward</em> reenvia sem perda.</p></div>
+      <div class="reveal d3 card"><span class="tag">Kafka</span><h3>Ordenação por chave</h3><p>Partição por <span class="mono">vehicle_id</span> mantém a ordem por veículo.</p></div>
+      <div class="reveal d4 card lb teal"><span class="tag">Flink</span><h3>Event-time + watermarks</h3><p>Processa por <em>event-time</em>; <em>watermarks</em> reordenam atrasados. <span class="cite">[Fragkoulis 2020]</span></p></div>
     </div>
-    <div class="reveal d5 callout teal"><span class="k">Resultado</span><p>Ordenação estrita por veículo e <span class="mono">timestamp</span> — mesmo sob estresse de carga e conectividade intermitente.</p></div>
+    <div class="reveal d5 callout teal"><span class="k">Resultado</span><p>Ordenação estrita por veículo e <span class="mono">timestamp</span> — mesmo sob estresse e rede intermitente.</p></div>
   </div>
   <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>12 / 25</span></div>
 </section>
@@ -481,11 +481,11 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
       <table>
         <thead><tr><th>Critério</th><th>Lambda</th><th>Kappa</th></tr></thead>
         <tbody>
-          <tr><td><strong>Ideia</strong></td><td>Camada batch (exata) + camada de velocidade + serving</td><td>Tudo é stream; reprocessa reproduzindo o log</td></tr>
-          <tr><td><strong>Base de código</strong></td><td class="lose">Dupla (mesma lógica em dois sistemas)</td><td class="win">Única</td></tr>
-          <tr><td><strong>Consistência</strong></td><td class="lose">Risco de divergência entre camadas</td><td class="win">Uma verdade, uma lógica</td></tr>
+          <tr><td><strong>Ideia</strong></td><td>Batch (exato) + velocidade + serving</td><td>Tudo é stream; replay do log</td></tr>
+          <tr><td><strong>Base de código</strong></td><td class="lose">Dupla (dois sistemas)</td><td class="win">Única</td></tr>
+          <tr><td><strong>Consistência</strong></td><td class="lose">Risco de divergência</td><td class="win">Uma verdade</td></tr>
           <tr><td><strong>Manutenção</strong></td><td class="lose">Alta</td><td class="win">Menor</td></tr>
-          <tr><td><strong>Reprocessar histórico</strong></td><td class="win">Camada batch nativa</td><td>Exige replay + Lakehouse para lote pesado</td></tr>
+          <tr><td><strong>Reprocessar histórico</strong></td><td class="win">Camada batch nativa</td><td>Replay + Lakehouse</td></tr>
         </tbody>
       </table>
     </div>
@@ -524,20 +524,20 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
     <h2 class="reveal d1">Três regimes para três SLAs distintos</h2>
     <div class="rule-h reveal d1"></div>
     <div class="grid g3" style="margin-top:0.1rem">
-      <div class="reveal d2 card lb teal"><span class="tag">Batch / cold path · horas</span><h3>Apache Spark</h3>
-        <p style="margin-top:0.15rem">RDD com tolerância por <strong>linhagem</strong>; reuso em memória até 20×. <span class="cite">[Zaharia 2012]</span></p>
-        <ul class="bl" style="margin-top:0.25rem"><li>Consolida do Delta Bronze</li><li>Manutenção preditiva; matriz de Markov</li><li>Generaliza o <strong>MapReduce</strong> <span class="cite">[Dean 2004]</span></li></ul>
+      <div class="reveal d2 card lb teal"><span class="tag">Batch / cold · horas</span><h3>Apache Spark</h3>
+        <p style="margin-top:0.15rem">RDD, tolerância por <strong>linhagem</strong>; memória 20×. <span class="cite">[Zaharia 2012]</span></p>
+        <ul class="bl" style="margin-top:0.25rem"><li>Consolida do Delta Bronze</li><li>Manutenção preditiva; Markov</li><li>Generaliza o <strong>MapReduce</strong> <span class="cite">[Dean 2004]</span></li></ul>
       </div>
       <div class="reveal d3 card lb amber"><span class="tag">Stream · segundos</span><h3>Spark Streaming</h3>
-        <p style="margin-top:0.15rem">Micro-batches (D-Streams) com <strong>exactly-once</strong> e saída idempotente. <span class="cite">[Zaharia 2013]</span></p>
-        <ul class="bl" style="margin-top:0.25rem"><li>Hot path das emergências</li><li>Orquestra a resposta na nuvem</li></ul>
+        <p style="margin-top:0.15rem">Micro-batches com <strong>exactly-once</strong> idempotente. <span class="cite">[Zaharia 2013]</span></p>
+        <ul class="bl" style="margin-top:0.25rem"><li>Hot path das emergências</li><li>Orquestra a resposta</li></ul>
       </div>
       <div class="reveal d4 card lb blue"><span class="tag">Stream · milissegundos</span><h3>Apache Flink</h3>
-        <p style="margin-top:0.15rem">Dataflow único; <em>ABS</em> (Chandy-Lamport) sem parar a execução. <span class="cite">[Carbone 2015]</span></p>
-        <ul class="bl" style="margin-top:0.25rem"><li>Janelas + event-time + watermarks</li><li>Rotas, congestão, score de condução</li></ul>
+        <p style="margin-top:0.15rem">Dataflow único; <em>ABS</em> sem parar a execução. <span class="cite">[Carbone 2015]</span></p>
+        <ul class="bl" style="margin-top:0.25rem"><li>Janelas + event-time + watermarks</li><li>Rotas, congestão, score</li></ul>
       </div>
     </div>
-    <div class="reveal d5 callout"><span class="k">Por que separar</span><p>Vazão histórica (Spark batch) ≠ orquestração da emergência (Spark Streaming) ≠ latência mínima com estado (Flink). A reação sub-segundo à colisão é na borda; a nuvem orquestra a resposta.</p></div>
+    <div class="reveal d5 callout"><span class="k">Por que separar</span><p>Vazão histórica ≠ emergência ≠ latência mínima. A reação sub-segundo é na borda; a nuvem orquestra.</p></div>
   </div>
   <div class="foot"><span class="t">Parte A · Infraestrutura e fluxo</span><span>15 / 25</span></div>
 </section>
@@ -548,14 +548,14 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
   <div class="body">
     <h2 class="reveal d1">Cada dado no banco certo para seu padrão de acesso</h2>
     <div class="rule-h reveal d1"></div>
-    <p class="reveal d1 lead">Raiz teórica: o <strong>teorema CAP</strong> — sob partição, consistência e disponibilidade não coexistem; segmenta-se o sistema e atribui-se a cada subserviço seu trade-off. <span class="cite">[Gilbert & Lynch 2002; Cattell 2011]</span></p>
+    <p class="reveal d1 lead">Raiz: o <strong>teorema CAP</strong> — sob partição, escolhe-se consistência ou disponibilidade. Cada subserviço, seu trade-off. <span class="cite">[Gilbert & Lynch 2002; Cattell 2011]</span></p>
     <div class="reveal d2 grid g4" style="margin-top:0.1rem">
-      <div class="card lb teal"><span class="tag">Wide-column · AP</span><h3>Cassandra</h3><p><strong>Telemetria.</strong> Escrita massiva (LSM), <em>clustering</em> por timestamp materializa a ordem. <span class="cite">[Lakshman 2009; DeCandia 2007]</span></p></div>
-      <div class="card lb blue"><span class="tag">Documento</span><h3>MongoDB</h3><p><strong>Cadastrais e dossiês.</strong> Esquema flexível para sensores heterogêneos e relatórios.</p></div>
-      <div class="card lb red"><span class="tag">Key-value · RAM</span><h3>Redis</h3><p><strong>Cache quente.</strong> Estado ao vivo, cache de rotas, geoespacial (sub-ms).</p></div>
-      <div class="card lb amber"><span class="tag">Relacional · CP</span><h3>PostgreSQL / Delta</h3><p><strong>Fonte da verdade.</strong> Cobrança (ACID), DW/Gold, treino de ML.</p></div>
+      <div class="card lb teal"><span class="tag">Wide-column · AP</span><h3>Cassandra</h3><p><strong>Telemetria.</strong> Escrita massiva (LSM); <em>clustering</em> por ts. <span class="cite">[Lakshman 2009]</span></p></div>
+      <div class="card lb blue"><span class="tag">Documento</span><h3>MongoDB</h3><p><strong>Cadastrais e dossiês.</strong> Esquema flexível.</p></div>
+      <div class="card lb red"><span class="tag">Key-value · RAM</span><h3>Redis</h3><p><strong>Cache quente.</strong> Estado ao vivo, rotas (sub-ms).</p></div>
+      <div class="card lb amber"><span class="tag">Relacional · CP</span><h3>PostgreSQL / Delta</h3><p><strong>Fonte da verdade.</strong> Cobrança (ACID), DW/Gold.</p></div>
     </div>
-    <div class="reveal d3 callout"><span class="k">Mapeamento CAP</span><p>Telemetria (AP, <em>always-writeable</em>) vs. cobrança/dossiê (CP, consistência forte) — o mesmo trade-off do carrinho vs. checkout do Dynamo.</p></div>
+    <div class="reveal d3 callout"><span class="k">Mapeamento CAP</span><p>Telemetria = <strong>AP</strong>; cobrança/dossiê = <strong>CP</strong> — o mesmo trade-off do carrinho vs. checkout do Dynamo.</p></div>
   </div>
   <div class="foot"><span class="t">Parte B · Armazenamento, interface e IA</span><span>16 / 25</span></div>
 </section>
@@ -566,7 +566,7 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
   <div class="body">
     <h2 class="reveal d1">Painel de monitoramento em Streamlit</h2>
     <div class="rule-h reveal d1"></div>
-    <p class="reveal d1 lead">OLAP sobre a <strong>Gold</strong> (nunca sobre os OLTP <span class="cite">[Chaudhuri & Dayal 1997]</span>); ao vivo via <strong>Redis</strong> pub/sub. O cubo frota × tempo × pátio × empresa apoia a visão executiva <span class="cite">[Gray 1997]</span>.</p>
+    <p class="reveal d1 lead">OLAP sobre a <strong>Gold</strong> (nunca OLTP), ao vivo via <strong>Redis</strong>. Cubo frota × tempo × pátio × empresa. <span class="cite">[Chaudhuri 1997; Gray 1997]</span></p>
     <div class="reveal d2 grid g4" style="margin-top:0.1rem">
       <div class="card lb blue" style="padding:0.55rem 0.85rem"><span class="tag">Frota</span><p style="margin-top:0.1rem">Mapa ao vivo, veículos ativos, bateria média, alertas mecânicos.</p></div>
       <div class="card" style="padding:0.55rem 0.85rem"><span class="tag">Reservas & locações</span><p style="margin-top:0.1rem">Funil de reservas e locações em andamento.</p></div>
@@ -589,17 +589,17 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
     <div class="rule-h reveal d1"></div>
     <div class="grid g2" style="margin-top:0.1rem">
       <div class="reveal d2 card lb teal"><span class="tag">Cobrança dinâmica · valor ao cliente</span><h3>Acionada na devolução</h3>
-        <p style="margin-top:0.15rem">Valor final = base ± ajustes por km, tempo, consumo, infrações e score de condução (Flink).</p>
-        <p class="neg"><em>Exactly-once</em> idempotente evita cobrar em dobro <span class="cite">[Zaharia 2013]</span>; auditável por time travel.</p>
+        <p style="margin-top:0.15rem">Valor = base ± km, tempo, consumo, infrações, score.</p>
+        <p class="neg"><em>Exactly-once</em> evita cobrar em dobro; auditável por time travel. <span class="cite">[Zaharia 2013]</span></p>
         <span class="kpi">↑ receita · ↓ contestações</span>
       </div>
       <div class="reveal d3 card lb amber"><span class="tag">Emergências · hot path</span><h3>De colisão a dossiê de regulação</h3>
         <p style="margin-top:0.15rem"><span class="mono">borda → alerts.critical → Spark → resposta</span></p>
-        <ul class="bl" style="margin-top:0.25rem"><li>Ação imediata: guincho, seguradora, substituto</li><li>Dossiê citável (sensores + vídeo + timeline)</li></ul>
+        <ul class="bl" style="margin-top:0.25rem"><li>Guincho, seguradora, substituto</li><li>Dossiê citável (sensores + timeline)</li></ul>
         <span class="kpi amber">↓ tempo de resposta e de regulação</span>
       </div>
     </div>
-    <p class="reveal d4 faint" style="font-size:var(--small)">Ponte entre as partes: a detecção (Parte A) alimenta a resposta e a triagem no dashboard (Parte B).</p>
+    <p class="reveal d4 faint" style="font-size:var(--small)">Ponte: a detecção (Parte A) alimenta a resposta e o dashboard (Parte B).</p>
   </div>
   <div class="foot"><span class="t">Parte B · Armazenamento, interface e IA</span><span>18 / 25</span></div>
 </section>
@@ -610,7 +610,7 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
   <div class="body">
     <h2 class="reveal d1">Concierge por voz: PLN + RAG (sem LLM paga)</h2>
     <div class="rule-h reveal d1"></div>
-    <p class="reveal d1 lead">O <strong>RAG</strong> ancora a geração em conhecimento recuperável (índice denso), reduz alucinação e dá <strong>proveniência</strong> auditável — a mesma base dos dossiês de emergência. <span class="cite">[Lewis 2020]</span></p>
+    <p class="reveal d1 lead">O <strong>RAG</strong> ancora a geração em conhecimento recuperável: reduz alucinação e dá <strong>proveniência</strong> — a mesma base dos dossiês. <span class="cite">[Lewis 2020]</span></p>
     <div class="reveal d2 flow" style="margin-top:0.1rem">
       <div class="node"><span class="lab">Voz</span><span class="ttl">ASR</span><span class="sub">Fala → texto.</span></div>
       <div class="arrow">›</div>
@@ -620,7 +620,7 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
       <div class="arrow">›</div>
       <div class="node"><span class="lab">Saída</span><span class="ttl">TTS + GPS</span><span class="sub">Roteiro e waypoints.</span></div>
     </div>
-    <div class="reveal d3 callout plum"><span class="k">Exemplo — "após a reunião…"</span><p>Almoço típico bem avaliado + estacionamento fácil + exposição de arte nos gostos do cliente → o agente consulta localização, POIs (vetorial) e agenda, monta o roteiro e <strong>injeta os waypoints no GPS</strong>. Privacidade: consentimento, PII, <em>wake-word</em> on-device.</p></div>
+    <div class="reveal d3 callout plum"><span class="k">Exemplo — "após a reunião…"</span><p>Almoço típico + estacionamento fácil + arte nos gostos do cliente → o agente consulta localização, POIs e agenda, monta o roteiro e <strong>injeta os waypoints no GPS</strong>. Privacidade: consentimento, PII, <em>wake-word</em>.</p></div>
   </div>
   <div class="foot"><span class="t">Parte B · Armazenamento, interface e IA</span><span>19 / 25</span></div>
 </section>
@@ -632,11 +632,11 @@ td{ color:var(--ink-2); } td strong{ color:var(--ink); }
     <h2 class="reveal d1">Três cenários: onde a modelagem cria valor</h2>
     <div class="rule-h reveal d1"></div>
     <div class="reveal d2 grid g3" style="margin-top:0.1rem">
-      <div class="card lb amber"><span class="tag">Crítico · resposta rápida</span><h3>Colisão em túnel</h3><p>Detecção na borda (sub-segundo) → <span class="mono">alerts.critical</span> → Spark orquestra guincho, seguradora e substituto; o Flink reordena a telemetria que só sai do túnel depois.</p><p class="neg">Acende: <strong>Fato_Sinistro</strong>, Dim_Sensor (SCD-2), Dim_TipoEvento, <strong>Dim_Tempo_Detalhe</strong>.</p><span class="kpi amber">↓ tempo de resposta</span></div>
-      <div class="card lb teal"><span class="tag">Usual · financeiro</span><h3>Devolução com condução agressiva</h3><p>O Flink (warm path) computa o score → <strong>Dim_FaixaConducao</strong> "Agressivo"; na devolução, a cobrança <em>exactly-once</em> soma km, consumo e a infração.</p><p class="neg">Acende: <strong>Fato_Cobranca</strong>, Fato_Telemetria_Diaria, Dim_FaixaConducao, Dim_TipoEvento.</p><span class="kpi">↑ receita / locação</span></div>
-      <div class="card lb blue"><span class="tag">Analítico · IA</span><h3>Pico no aeroporto + pane + concierge</h3><p>Markov condicional prevê a migração ao Galeão → reposiciona vazios; o batch prevê falha → agenda manutenção; o concierge (RAG) monta o roteiro.</p><p class="neg">Acende: Fato_Movimentacao, <strong>Fato_Manutencao</strong>, Fato_Telemetria_Diaria, Dim_Patio, Dim_Tempo_Detalhe.</p><span class="kpi blue">↑ utilização · ↓ downtime · ↑ NPS</span></div>
+      <div class="card lb amber"><span class="tag">Crítico · resposta rápida</span><h3>Colisão em túnel</h3><p>Borda detecta (sub-segundo) → Spark orquestra guincho, seguradora, substituto; Flink reordena a telemetria retida no túnel.</p><p class="neg">Acende: <strong>Fato_Sinistro</strong>, Dim_Sensor (SCD-2), Dim_TipoEvento, <strong>Dim_Tempo_Detalhe</strong>.</p><span class="kpi amber">↓ tempo de resposta</span></div>
+      <div class="card lb teal"><span class="tag">Usual · financeiro</span><h3>Devolução com condução agressiva</h3><p>Flink computa o score → <strong>Dim_FaixaConducao</strong> "Agressivo"; a cobrança soma km, consumo e a infração.</p><p class="neg">Acende: <strong>Fato_Cobranca</strong>, Fato_Telemetria_Diaria, Dim_FaixaConducao, Dim_TipoEvento.</p><span class="kpi">↑ receita / locação</span></div>
+      <div class="card lb blue"><span class="tag">Analítico · IA</span><h3>Pico no aeroporto + pane + concierge</h3><p>Markov prevê a migração ao Galeão → reposiciona vazios; o batch prevê falha → agenda; o concierge monta o roteiro.</p><p class="neg">Acende: Fato_Movimentacao, <strong>Fato_Manutencao</strong>, Fato_Telemetria_Diaria, Dim_Patio, Dim_Tempo_Detalhe.</p><span class="kpi blue">↑ utilização · ↓ downtime · ↑ NPS</span></div>
     </div>
-    <div class="reveal d3 callout"><span class="k">Fundamentação</span><p>Cada caso ativa fatos e dimensões específicos — e três deles <strong>justificam a extensão do modelo</strong> (Dim_Tempo_Detalhe, Fato_Cobranca, Fato_Manutencao/Dim_Sensor). A modelagem não é abstrata: aparece no crítico, no usual e no analítico.</p></div>
+    <div class="reveal d3 callout"><span class="k">Fundamentação</span><p>Três casos <strong>justificam a extensão</strong> (Dim_Tempo_Detalhe, Fato_Cobranca, Fato_Manutencao). A modelagem aparece no crítico, no usual e no analítico.</p></div>
   </div>
   <div class="foot"><span class="t">Solução Big Data · Frota Autônoma Conectada</span><span>20 / 25</span></div>
 </section>
